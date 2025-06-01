@@ -82,6 +82,8 @@
         align-items: center;
         justify-content: center;
 
+        /* max-width: 200px; */
+
         gap: 20px;
 
         grid-area: botões;

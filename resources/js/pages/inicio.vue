@@ -55,6 +55,11 @@
 
 
 <style>
+    *{
+        margin: 0;
+        padding: 0;
+    }
+
     body,html,#app{
         color: black;
         width: 100%;

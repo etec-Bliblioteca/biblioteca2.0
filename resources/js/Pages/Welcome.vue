@@ -1,9 +1,0 @@
-<script>
-export default {
-    name:"Pagina1"
-}
-</script>
-
-<template>
-    <h1>Hello World!!!</h1>
-</template>

@@ -1,14 +1,18 @@
 <template>
-  <div class="carousel-container">
-    <div class="carousel">
-      <div class="carousel-item" title="Item 1">Item 1</div>
-      <div class="carousel-item" title="Item 2">Item 2</div>
-      <div class="carousel-item" title="Item 3">Item 3</div>
-      <div class="carousel-item" title="Item 4">Item 4</div>
+  <!-- Parte externa criada para manter o corrocel dentro da tela -->
+  <div class="carrocel">
+    <!-- carrocel -->
+    <div id="carrocelEventos">
+      <!-- eventos -->
+      <div class="evento" title="Item 1">Item 1</div>
+      <div class="evento" title="Item 2">Item 2</div>
+      <div class="evento" title="Item 3">Item 3</div>
+      <div class="evento" title="Item 4">Item 4</div>
     </div>
 
-    <button class="nav-button prev">❮</button>
-    <button class="nav-button next">❯</button>
+    <!-- botões -->
+    <button class="btnVoltar">❮</button>
+    <button class="btnAvancar">❯</button>
   </div>
 </template>
 
@@ -22,232 +26,220 @@ export default {
     criarCarrocel() {},
   },
   mounted() {
-    const carousel = document.querySelector(".carousel");
-    const container = document.querySelector(".carousel-container");
-    const nextButton = document.querySelector(".next");
-    const prevButton = document.querySelector(".prev");
+    // Criar eventos
 
-    let isDragging = false;
-    let startPos = 0;
-    let currentTranslate = 0;
-    let prevTranslate = 0;
-    let animationID;
-    let currentIndex = 1;
+    // array que armazena os eventos
+    const ArrayEventos = [];
 
-    // Clona para loop contínuo
-    const items = Array.from(carousel.children);
-    const firstClone = items[0].cloneNode(true);
-    const lastClone = items[items.length - 1].cloneNode(true);
+    // pega o local onde vão ficar cada evento no DOM
+    const carrocelDOM = document.getElementById("carrocelEventos");
 
-    firstClone.setAttribute("id", "first-clone");
-    lastClone.setAttribute("id", "last-clone");
+    // trocar por um props que vai receber a quantidade de eventos
+    const quant = 4;
 
-    carousel.appendChild(firstClone);
-    carousel.insertBefore(lastClone, items[0]);
+    // Class que cria os eventos
+    const Evento = function (posi, id) {
+      this.posi = posi;
+      this.id = id;
+    };
 
-    const allItems = document.querySelectorAll(".carousel-item");
+    // criar os eventos no javascript
+    for (let i = 1; i <= quant; i++) {
+      const evento = new Evento(i, i);
 
-    setPositionByIndex();
-
-    function getItemWidth() {
-      const item = allItems[0];
-      const style = getComputedStyle(carousel);
-      const gap = parseInt(style.gap) || 0;
-      return item.clientWidth + gap;
+      ArrayEventos.push(evento);
     }
 
-    // ------------------ Toque e Arrasto ------------------
-    carousel.addEventListener("touchstart", touchStart);
-    carousel.addEventListener("touchend", touchEnd);
-    carousel.addEventListener("touchmove", touchMove);
+    // const evento1 = new Evento(1,1);
 
-    carousel.addEventListener("mousedown", touchStart);
-    carousel.addEventListener("mouseup", touchEnd);
-    carousel.addEventListener("mousemove", touchMove);
-    carousel.addEventListener("mouseleave", touchEnd);
+    // criar objetos no DOM
+    ArrayEventos.map((el) => {
+      const novoEvento = document.createElement("div");
 
-    function touchStart(event) {
-      isDragging = true;
-      startPos = getPositionX(event);
-      animationID = requestAnimationFrame(animation);
-    }
+      novoEvento.setAttribute("id", el.id);
+      novoEvento.classList.add("evento");
+      novoEvento.innerText = el.id;
 
-    function touchMove(event) {
-      if (!isDragging) return;
-      const currentPosition = getPositionX(event);
-      currentTranslate = prevTranslate + currentPosition - startPos;
-    }
-
-    function touchEnd() {
-      cancelAnimationFrame(animationID);
-      isDragging = false;
-
-      const movedBy = currentTranslate - prevTranslate;
-      const threshold = getItemWidth() / 4;
-
-      if (movedBy < -threshold) {
-        currentIndex += 1;
-      }
-      if (movedBy > threshold) {
-        currentIndex -= 1;
-      }
-
-      setPositionByIndex();
-    }
-
-    function getPositionX(event) {
-      return event.type.includes("mouse")
-        ? event.pageX
-        : event.touches[0].clientX;
-    }
-
-    function animation() {
-      setCarouselPosition();
-      if (isDragging) requestAnimationFrame(animation);
-    }
-
-    function setCarouselPosition() {
-      carousel.style.transform = `translateX(${currentTranslate}px)`;
-    }
-
-    function setPositionByIndex() {
-      const itemWidth = getItemWidth();
-      currentTranslate = -itemWidth * currentIndex;
-      prevTranslate = currentTranslate;
-      setCarouselPosition();
-      carousel.style.transition = "transform 0.3s ease";
-
-      carousel.addEventListener("transitionend", checkIndex, { once: true });
-    }
-
-    function checkIndex() {
-      carousel.style.transition = "none";
-      const itemWidth = getItemWidth();
-
-      if (allItems[currentIndex].id === "first-clone") {
-        currentIndex = 1;
-        currentTranslate = -itemWidth * currentIndex;
-        prevTranslate = currentTranslate;
-        setCarouselPosition();
-      }
-      if (allItems[currentIndex].id === "last-clone") {
-        currentIndex = allItems.length - 2;
-        currentTranslate = -itemWidth * currentIndex;
-        prevTranslate = currentTranslate;
-        setCarouselPosition();
-      }
-    }
-
-    // ------------------ Botões ------------------
-    nextButton.addEventListener("click", () => {
-      currentIndex++;
-      setPositionByIndex();
+      carrocelDOM.appendChild(novoEvento);
     });
 
-    prevButton.addEventListener("click", () => {
-      currentIndex--;
-      setPositionByIndex();
-    });
+    carrocelDOM.addEventListener('mouseup',()=>{
+      console.log('foi')
+    })
 
-    // const Evento = function (posi, id) {
-    //   this.posi = posi;
-    //   this.id = id;
-    // };
+    // let isDragging = false;
+    // let startPos = 0;
+    // let currentTranslate = 0;
+    // let prevTranslate = 0;
+    // let animationID;
+    // let currentIndex = 1;
 
-    // const ArrayEventos = [];
-    // const quant = 4;
+    // // Clona para loop contínuo
+    // const items = Array.from(carousel.children);
+    // const firstClone = items[0].cloneNode(true);
+    // const lastClone = items[items.length - 1].cloneNode(true);
 
-    // for (let i = 1; i <= quant; i++) {
-    //   const evento = new Evento(i, i);
+    // firstClone.setAttribute("id", "first-clone");
+    // lastClone.setAttribute("id", "last-clone");
 
-    //   ArrayEventos.push(evento);
+    // carousel.appendChild(firstClone);
+    // carousel.insertBefore(lastClone, items[0]);
+
+    // const allItems = document.querySelectorAll(".carousel-item");
+
+    // setPositionByIndex();
+
+    // function getItemWidth() {
+    //   const item = allItems[0];
+    //   const style = getComputedStyle(carousel);
+    //   const gap = parseInt(style.gap) || 0;
+    //   return item.clientWidth + gap;
     // }
 
-    // // const evento1 = new Evento(1,1);
+    // // ------------------ Toque e Arrasto ------------------
+    // carousel.addEventListener("touchstart", touchStart);
+    // carousel.addEventListener("touchend", touchEnd);
+    // carousel.addEventListener("touchmove", touchMove);
 
-    // // criar objetos no DOM
-    // const carrocelDOM = document.getElementById("carrocelEventos");
+    // carousel.addEventListener("mousedown", touchStart);
+    // carousel.addEventListener("mouseup", touchEnd);
+    // carousel.addEventListener("mousemove", touchMove);
+    // carousel.addEventListener("mouseleave", touchEnd);
 
-    // ArrayEventos.map((el) => {
-    //   const novoEvento = document.createElement("div");
+    // function touchStart(event) {
+    //   isDragging = true;
+    //   startPos = getPositionX(event);
+    //   animationID = requestAnimationFrame(animation);
+    // }
 
-    //   novoEvento.setAttribute("id", el.id);
-    //   novoEvento.classList.add("eventos");
-    //   novoEvento.innerText = el.id;
+    // function touchMove(event) {
+    //   if (!isDragging) return;
+    //   const currentPosition = getPositionX(event);
+    //   currentTranslate = prevTranslate + currentPosition - startPos;
+    // }
 
-    //   carrocelDOM.appendChild(novoEvento);
+    // function touchEnd() {
+    //   cancelAnimationFrame(animationID);
+    //   isDragging = false;
+
+    //   const movedBy = currentTranslate - prevTranslate;
+    //   const threshold = getItemWidth() / 4;
+
+    //   if (movedBy < -threshold) {
+    //     currentIndex += 1;
+    //   }
+    //   if (movedBy > threshold) {
+    //     currentIndex -= 1;
+    //   }
+
+    //   setPositionByIndex();
+    // }
+
+    // function getPositionX(event) {
+    //   return event.type.includes("mouse")
+    //     ? event.pageX
+    //     : event.touches[0].clientX;
+    // }
+
+    // function animation() {
+    //   setCarouselPosition();
+    //   if (isDragging) requestAnimationFrame(animation);
+    // }
+
+    // function setCarouselPosition() {
+    //   carousel.style.transform = `translateX(${currentTranslate}px)`;
+    // }
+
+    // function setPositionByIndex() {
+    //   const itemWidth = getItemWidth();
+    //   currentTranslate = -itemWidth * currentIndex;
+    //   prevTranslate = currentTranslate;
+    //   setCarouselPosition();
+    //   carousel.style.transition = "transform 0.3s";
+
+    //   carousel.addEventListener("transitionend", checkIndex, { once: true });
+    // }
+
+    // function checkIndex() {
+    //   carousel.style.transition = "none";
+    //   const itemWidth = getItemWidth();
+
+    //   if (allItems[currentIndex].id === "first-clone") {
+    //     currentIndex = 1;
+    //     currentTranslate = -itemWidth * currentIndex;
+    //     prevTranslate = currentTranslate;
+    //     setCarouselPosition();
+    //   }
+    //   if (allItems[currentIndex].id === "last-clone") {
+    //     currentIndex = allItems.length - 2;
+    //     currentTranslate = -itemWidth * currentIndex;
+    //     prevTranslate = currentTranslate;
+    //     setCarouselPosition();
+    //   }
+    // }
+
+    // // ------------------ Botões ------------------
+    // nextButton.addEventListener("click", () => {
+    //   currentIndex++;
+    //   setPositionByIndex();
+    // });
+
+    // prevButton.addEventListener("click", () => {
+    //   currentIndex--;
+    //   setPositionByIndex();
     // });
   },
 };
 </script>
 
 <style>
-/* .eventos {
+/* Os eventos tem que ser separado porque o javascrip não usa o scoped fazendo com que os novos eventos criados não tenham o estilo */
+.evento {
+  border-radius: 20px;
   margin: 0 0px;
-  width: 320px;
+  min-width: 250px;
   height: 100%;
+  max-height: 120px;
   background-color: rgb(0, 204, 255);
-} */
+}
 </style>
 
 <style scoped>
-* {
-  box-sizing: border-box;
-}
-
-.carousel-container {
-  position: relative;
-  overflow: hidden;
-  width: 90%;
-  max-width: 600px;
-  margin: auto;
-}
-
-.carousel {
-  display: flex;
-  gap: 20px;
-  transition: transform 0.3s ease;
-}
-
-.carousel-item {
-  min-width: 80%;
-  background-color: #3498db;
-  color: white;
-  height: 150px;
-  border-radius: 10px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  user-select: none;
-  flex-shrink: 0;
-  font-size: 24px;
-}
-
-.nav-button {
+/* Cnfiguração dos botões */
+button {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  background-color: rgba(46, 204, 113, 0.8);
-  color: white;
-  border: none;
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  cursor: pointer;
-  font-size: 24px;
-  transition: background-color 0.3s;
-  z-index: 10;
+  transform: translateY(-50%);
 }
 
-.nav-button:hover {
-  background-color: rgba(39, 174, 96, 0.9);
-}
-
-.nav-button.prev {
+.btnVoltar {
   left: 10px;
 }
 
-.nav-button.next {
+.btnAvancar {
   right: 10px;
+}
+
+/* Configuração do bloco que segura o carrocel */
+.carrocel {
+  margin-top: 15px;
+  overflow: hidden;
+  position: relative;
+  max-width: 99vw;
+  height: 100%;
+}
+
+/* carrocel */
+#carrocelEventos {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  gap: 30px;
+
+  width: 1000px;
+  height: 100%;
 }
 </style>

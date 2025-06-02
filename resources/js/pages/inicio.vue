@@ -74,7 +74,7 @@
         'eventos'
         'revistasNovas'
         'botões';
-        grid-template-rows: auto 1fr 1.4fr 0.25fr;
+        grid-template-rows: auto 1fr 1.6fr 0.25fr;
     }
 
     #caixaBotões{

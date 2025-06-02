@@ -63,9 +63,25 @@ export default {
       carrocelDOM.appendChild(novoEvento);
     });
 
-    carrocelDOM.addEventListener('mouseup',()=>{
-      console.log('foi')
-    })
+    let click_ativo = false;
+
+    carrocelDOM.addEventListener("mousedown", () => {
+      click_ativo = true;
+      console.log("clicando...");
+    });
+
+    carrocelDOM.addEventListener("mouseup", () => {
+      click_ativo = false;
+      console.log("parou de clicar");
+    });
+
+    setInterval
+
+    if(click_ativo == true){
+      carrocelDOM.addEventListener('mousemove',(el)=>{
+        console.log(el)
+      })
+    }
 
     // let isDragging = false;
     // let startPos = 0;

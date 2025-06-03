@@ -2,7 +2,8 @@
         <!-- topo da página -->
         <header>
             <!-- botão de menu -->
-            <btnMenu></btnMenu>
+            <btnMenu @click="menu = menu ? false : true"></btnMenu>
+            <menu :v-show="menuAtivo"></menu>
             <!-- Icone de Perfil -->
             <img-perfil></img-perfil>
         </header>
@@ -26,6 +27,7 @@
 
 
 <script>
+    import menu from '../components/ComponentMenu.vue'
     import carrocelEventos from '../components/ComponentCarrocelEvento.vue'
     import carrocelRevistasNovas from '../components/ComponentCarrocelRevistasNovas.vue'
     import subtitulosPrincipais from '../components/ComponentSubtitulos.vue'
@@ -39,16 +41,22 @@
             return{
                 // Pega esses titulos e joga em um props depois
                 titulo1: "Eventos",
-                titulo2: "Revistas Novas"
+                titulo2: "Revistas Novas",
+                menuAtivo: false
             }
         },
         components: {
+            menu,
             btnMenu,
             imgPerfil,
             btnMudarPg,
             subtitulosPrincipais,
             carrocelEventos,
             carrocelRevistasNovas
+        },mounted(){
+            setInterval(()=>{
+                console.log(this.menuAtivo)
+            })
         }
     }
 </script>

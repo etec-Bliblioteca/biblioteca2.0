@@ -9,6 +9,10 @@ Route::get('/', function () {
     return Inertia::render('inicio');
 })->name('home');
 
+Route::get('/catalogo', function () {
+    return Inertia::render('Catalogo');
+})->name('home');
+
 // Route::get('/', function () {
 //     return Inertia::render('Welcome', [
 //         'canLogin' => Route::has('login'),

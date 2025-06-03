@@ -1,8 +1,45 @@
+
+<script>
+    import carrocelEventos from '../components/ComponentCarrocelEvento.vue'
+    import carrocelRevistasNovas from '../components/ComponentCarrocelRevistasNovas.vue'
+    import subtitulosPrincipais from '../components/ComponentSubtitulos.vue'
+    import btnMudarPg from '../components/ComponentBtnMudarPg.vue'
+    import imgPerfil from '../components/ComponentImgPerfil.vue';
+    import btnMenu from '../components/ComponentBtnMenu.vue';
+    import Menu from '../components/ComponentMenu.vue';
+    export default{
+        name: 'inicio',
+        data(){
+            return{
+                menuActive:false,
+                // Pega esses titulos e joga em um props depois
+                titulo1: "Eventos",
+                titulo2: "Revistas Novas",
+
+            }
+        },
+        components: {
+            Menu,
+            btnMenu,
+            imgPerfil,
+            btnMudarPg,
+            subtitulosPrincipais,
+            carrocelEventos,
+            carrocelRevistasNovas
+        },
+        methods:{
+            clickMenu(active){
+                this.menuActive = active;
+            }
+        }
+    }
+</script>
 <template>
         <!-- topo da página -->
         <header>
+            <Menu :active="menuActive" page="0"/>
             <!-- botão de menu -->
-            <btnMenu></btnMenu>
+            <btnMenu @clickMenu="clickMenu"></btnMenu>
             <!-- Icone de Perfil -->
             <img-perfil></img-perfil>
         </header>
@@ -24,34 +61,6 @@
         </div>
 </template>
 
-
-<script>
-    import carrocelEventos from '../components/ComponentCarrocelEvento.vue'
-    import carrocelRevistasNovas from '../components/ComponentCarrocelRevistasNovas.vue'
-    import subtitulosPrincipais from '../components/ComponentSubtitulos.vue'
-    import btnMudarPg from '../components/ComponentBtnMudarPg.vue'
-    import imgPerfil from '../components/ComponentImgPerfil.vue';
-    import btnMenu from '../components/ComponentBtnMenu.vue';
-
-    export default{
-        name: 'inicio',
-        data(){
-            return{
-                // Pega esses titulos e joga em um props depois
-                titulo1: "Eventos",
-                titulo2: "Revistas Novas"
-            }
-        },
-        components: {
-            btnMenu,
-            imgPerfil,
-            btnMudarPg,
-            subtitulosPrincipais,
-            carrocelEventos,
-            carrocelRevistasNovas
-        }
-    }
-</script>
 
 
 <style>

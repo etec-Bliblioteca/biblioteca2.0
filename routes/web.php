@@ -14,9 +14,24 @@ Route::get('/', function () {
     ]);
 });
 
+<<<<<<< HEAD
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
+=======
+Route::get('/catalogo', function () {
+    return Inertia::render('Catalogo');
+})->name('home');
+
+// Route::get('/', function () {
+//     return Inertia::render('Welcome', [
+//         'canLogin' => Route::has('login'),
+//         'canRegister' => Route::has('register'),
+//         'laravelVersion' => Application::VERSION,
+//         'phpVersion' => PHP_VERSION,
+//     ]);
+// });
+>>>>>>> 0e4ff3a (Menu criado e ajustado)
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

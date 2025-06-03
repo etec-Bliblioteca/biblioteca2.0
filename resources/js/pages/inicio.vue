@@ -63,16 +63,11 @@
 
 
 <style>
-    *{
-        margin: 0;
-        padding: 0;
-    }
-
     body,html,#app{
         color: black;
         width: 100%;
         height: 100%;
-        background-color: #f0f0f0;
+        background-color: var(--corFundoPrincipal);
     }
 
     #app{
@@ -82,13 +77,15 @@
         'eventos'
         'revistasNovas'
         'botões';
-        grid-template-rows: auto 1fr 1.4fr 0.25fr;
+        grid-template-rows: auto 1fr 1.6fr 0.25fr;
     }
 
     #caixaBotões{
         display: flex;
         align-items: center;
         justify-content: center;
+
+        /* max-width: 200px; */
 
         gap: 20px;
 

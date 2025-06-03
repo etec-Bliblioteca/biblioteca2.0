@@ -1,0 +1,21 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+
+@import url('https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+
+
+:root{
+    --corFundoPrincipal: #F4F6F7;
+
+    --cor1:#607D8B;
+    --cor2:#A2B6BE;
+    --cor3:#E2E8EB;
+    --raleway: "Raleway";
+    --roboto: "Roboto";
+}
+
+*{
+    padding: 0px;
+    border: none;
+    padding: 0px;
+    margin: 0px;
+}

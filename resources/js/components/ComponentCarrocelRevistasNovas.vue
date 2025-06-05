@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-<template>
-    <div></div>
-=======
 <script>
 export default {
     name: "carrocelRevistasNovas",
@@ -81,7 +77,6 @@ export default {
             <img :src="'../storage/images/semImagem.jpg'"/>
         </div>
     </div>
->>>>>>> 0e4ff3a (Menu criado e ajustado)
 </template>
 
 <script>
@@ -91,14 +86,6 @@ export default {
 </script>
 
 <style scoped>
-<<<<<<< HEAD
-    div{
-        margin-top: 10px;
-        width: 100%;
-        height: 100%;
-        background-color: black;
-    }
-=======
 #container {
     margin-top: 10px;
     width: 100%;
@@ -173,5 +160,4 @@ export default {
     height: 100%;
     object-fit: cover;
 }
->>>>>>> 0e4ff3a (Menu criado e ajustado)
 </style>

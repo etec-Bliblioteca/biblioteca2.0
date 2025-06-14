@@ -13,6 +13,27 @@ Route::get('/catalogo', function () {
     return Inertia::render('Catalogo');
 })->name('home');
 
+
+
+// Rota para os administradores
+Route::get("/admin/home",function(){
+    return Inertia::render("Admin");
+});
+
+Route::get("/admin/liberacao",function(){
+    return Inertia::render("Liberacao");
+});
+
+Route::get("/admin/pedidos",function(){
+    return Inertia::render("Pedidos");
+});
+
+Route::get("/add/revista",function(){
+    return Inertia::render("AddRevista");
+});
+
+
+
 // Route::get('/', function () {
 //     return Inertia::render('Welcome', [
 //         'canLogin' => Route::has('login'),

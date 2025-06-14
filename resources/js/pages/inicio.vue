@@ -63,7 +63,7 @@
 
 
 
-<style>
+<style scoped>
     body,html,#app{
         color: black;
         width: 100%;

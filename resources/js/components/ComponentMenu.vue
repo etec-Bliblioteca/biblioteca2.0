@@ -71,7 +71,7 @@ links[props.page].classList.add('active');
     </div>
 </template>
 
-<style>
+<style scoped>
 
 .menuBackground {
     width: 70%;

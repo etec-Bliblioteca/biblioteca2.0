@@ -29,6 +29,7 @@
         position: absolute;
         width: 40px;
         height: 40px;
+        top: 25px;
         left: 25px;
         border: 2px solid #000000;
         border-radius: 5px;
@@ -40,7 +41,7 @@
         transition: 0.3s;
     }
 
-    
+
     #btnMenu svg{
         width: 30px;
         height: 30px;

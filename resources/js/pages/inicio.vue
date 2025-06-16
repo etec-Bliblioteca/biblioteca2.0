@@ -2,7 +2,7 @@
 <script>
     import carrocelEventos from '../components/ComponentCarrocelEvento.vue'
     import carrocelRevistasNovas from '../components/ComponentCarrocelRevistasNovas.vue'
-    import subtitulosPrincipais from '../components/ComponentSubtitulos.vue'
+    import subtitulosPrincipais from '../components/ComponentTitulos.vue'
     import btnMudarPg from '../components/ComponentBtnMudarPg.vue'
     import imgPerfil from '../components/ComponentImgPerfil.vue';
     import btnMenu from '../components/ComponentBtnMenu.vue';
@@ -35,6 +35,7 @@
     }
 </script>
 <template>
+    <div id="pg-inicio">
         <!-- topo da página -->
         <header>
             <Menu :active="menuActive" page="0"/>
@@ -59,19 +60,14 @@
             <btnMudarPg></btnMudarPg>
             <btnMudarPg></btnMudarPg>
         </div>
+    </div>
 </template>
 
 
 
-<style>
-    body,html,#app{
-        color: black;
-        width: 100%;
-        height: 100%;
-        background-color: var(--corFundoPrincipal);
-    }
-
-    #app{
+<style scoped>
+    #pg-inicio{
+        min-height: 100%;
         display: grid;
         grid-template-areas:
         'header'

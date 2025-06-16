@@ -1,10 +1,10 @@
 <template>
-        <h2>{{ nomeTitulo }}</h2>
+        <h1>{{ nomeTitulo }}</h1>
 </template>
 
 <script>
     export default{
-        name: 'subtitulosPrincipais',
+        name: 'titulos',
         props:{
             nomeTitulo:String,
         },
@@ -12,7 +12,7 @@
 </script>
 
 <style scoped>
-    h2{
+    h1{
         outline: 3px solid var(--cor1);
         border-radius: 5px;
         height: 40px;

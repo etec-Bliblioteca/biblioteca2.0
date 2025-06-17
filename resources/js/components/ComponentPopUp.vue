@@ -7,7 +7,7 @@
       <button id="btnFechar" @click="desativarPopUp"></button>
 
       <!-- imagem da revista -->
-      <img src="" alt="" />
+      <img :src="img" alt="" />
 
       <!-- titulo da revista -->
       <titulo :nomeTitulo="titulo" id="titulo"></titulo>
@@ -17,13 +17,17 @@
         <!-- tema -->
         <section id="tema">
           <subtitulo :nomeSubtitulo="subtitulos.sub1"></subtitulo>
-          <span>slasdas</span>
+          <span>
+            {{ tema }}
+          </span>
         </section>
 
         <!-- quantidade -->
         <section id="quantidade">
           <subtitulo :nomeSubtitulo="subtitulos.sub2"></subtitulo>
-          <span>2</span>
+          <span>
+            {{ quant }}
+          </span>
         </section>
 
         <!-- descrição -->
@@ -33,18 +37,7 @@
 
           <!-- descrição texto -->
           <p id="textoDescricao">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Omnis
-            voluptatum voluptatibus expedita ipsum aut sequi libero? Blanditiis
-            vel error perspiciatis similique. Illo deserunt amet tempora
-            officiis aspernatur esse adipisci eveniet? Lorem ipsum dolor sit
-            amet consectetur adipisicing elit. Omnis voluptatum voluptatibus
-            expedita ipsum aut sequi libero? Blanditiis vel error perspiciatis
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Omnis
-            voluptatum voluptatibus expedita ipsum aut sequi libero? Blanditiis
-            vel error perspiciatis similique. Illo deserunt amet tempora
-            officiis aspernatur esse adipisci eveniet? Lorem ipsum dolor sit
-            amet consectetur adipisicing elit. Omnis voluptatum voluptatibus
-            expedita ipsum aut sequi libero? Blanditiis vel error perspiciatis
+            {{ descricao }}
           </p>
         </section>
       </section>
@@ -63,7 +56,6 @@ export default {
   name: "popUp",
   data() {
     return {
-      titulo: "titulo da revista",
       //   subtitulos da página que não devem ser mudados
       subtitulos: {
         sub1: "Tema",
@@ -79,6 +71,11 @@ export default {
   props: {
     // recebe o aviso se ele deve ser ativado ou não
     active: Boolean,
+    descricao: String,
+    tema: String,
+    quant: Number,
+    titulo: String,
+    img: String
   },
   methods: {
     // função feita para desativar o elemento e ativar de novo a barra de rolagem no fundo
@@ -87,7 +84,7 @@ export default {
       setTimeout(() => {
         this.$emit("desativar");
         document.body.style.overflow = "";
-      }, 400);
+      }, 190);
     },
   },
   updated() {
@@ -141,11 +138,11 @@ export default {
 }
 
 .animacaoEntrando {
-  animation: entrada 0.5s ease-out alternate;
+  animation: entrada 0.2s ease-out alternate;
 }
 
 .animacaoSaindo {
-  animation: saida 0.5s ease-in-out alternate;
+  animation: saida 0.2s ease-in alternate;
 }
 
 @keyframes entrada {
@@ -214,10 +211,10 @@ img {
 #btnResevar {
   grid-area: btnResevar;
   background-color: red;
-  width: 200px;
-  height: 40px;
+  width: 230px;
+  height: 45px;
   border-radius: 10px;
   margin: 0 auto;
-  margin-bottom: 25px;
+  margin-bottom: 30px;
 }
 </style>

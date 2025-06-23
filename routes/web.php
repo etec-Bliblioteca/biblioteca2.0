@@ -1,19 +1,25 @@
 <?php
 
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\CatalogoController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\RevistaController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::get('/', function () {
     return Inertia::render('inicio');
-})->name('home');
+})->name('index');
 
-Route::get('/catalogo', function () {
-    return Inertia::render('Catalogo');
-})->name('home');
+Route::get('/catalogo',[CatalogoController::class,"index"])->name('catalogo');
+
+Route::post('/catalogo/revista',[CatalogoController::class,"show"])->name('catalogoRevista');
 
 
+Route::get('/catalogo/revista',function(){
+    return redirect()->route('catalogo');
+});
 
 // Rota para os administradores
 Route::get("/admin/home",function(){
@@ -32,6 +38,11 @@ Route::get("/add/revista",function(){
     return Inertia::render("AddRevista");
 });
 
+Route::get("/login",function(){
+    return Inertia::render("Login");
+})->name('login.form');
+
+Route::post("/login",[LoginController::class,'store'])->name('login');
 
 
 // Route::get('/', function () {

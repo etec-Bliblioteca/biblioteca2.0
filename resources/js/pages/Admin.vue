@@ -105,6 +105,7 @@ import CardPedido from '@/components/admin/ComponentCardPedido.vue';
     #cardUsers{
         background:#28A745;
     }
+
     #cardUsers .cardTitle{
         color: #1F7634;
     }
@@ -112,7 +113,5 @@ import CardPedido from '@/components/admin/ComponentCardPedido.vue';
     #cardUsers svg path{
         fill: #1F7634;;
     }
-
-
 
 </style>

@@ -1,261 +1,241 @@
 <template>
-  <!-- Parte externa criada para manter o corrocel dentro da tela -->
-  <div class="carrocel">
-    <!-- carrocel -->
-    <div id="carrocelEventos">
-      <!-- eventos -->
-      <div class="evento" title="Item 1">Item 1</div>
-      <div class="evento" title="Item 2">Item 2</div>
-      <div class="evento" title="Item 3">Item 3</div>
-      <div class="evento" title="Item 4">Item 4</div>
+  <div class="carrossel-container">
+    <div class="carrossel-wrapper">
+      <div
+        class="carrossel"
+        ref="carrossel"
+        @mousedown="startDrag"
+        @mouseup="stopDrag"
+        @mousemove="drag"
+        @mouseleave="stopDrag"
+        @touchstart="startTouch"
+        @touchmove="touchMove"
+        @touchend="endTouch"
+      >
+        <div
+          v-for="evento in eventos"
+          :key="evento.id"
+          class="evento"
+        >
+          {{ evento.id }}
+        </div>
+      </div>
     </div>
 
-    <!-- botões -->
-    <button class="btnVoltar">❮</button>
-    <button class="btnAvancar">❯</button>
+    <button class="btn-voltar" @click="mover(-1)">❮</button>
+    <button class="btn-avancar" @click="mover(1)">❯</button>
   </div>
 </template>
 
 <script>
 export default {
-  name: "carrocelEventos",
-  data() {
-    return {};
+  name: "CarrosselEventos",
+  props: {
+    // puxar os eventos por aqui
+    quantidadeEventos: {
+      type: Number,
+      default: 4,
+    },
   },
-  methods: {
-    criarCarrocel() {},
+  data() {
+    return {
+        // armazena os eventos já como objetos para serem rederizados
+      eventos: [],
+    //   identifica se está sendo precionada a tela
+      isDragging: false,
+
+      startPosX: 0,
+      currentTranslate: 0,
+      prevTranslate: 0,
+      currentIndex: 0,
+      animationId: null,
+      itemWidth: 280, // 250px (item) + 30px (gap)
+    };
+  },
+  created() {
+    // Inicializa os eventos
+    for (let i = 1; i <= this.quantidadeEventos; i++) {
+      this.eventos.push({ id: i });
+    }
   },
   mounted() {
-    // Criar eventos
-
-    // array que armazena os eventos
-    const ArrayEventos = [];
-
-    // pega o local onde vão ficar cada evento no DOM
-    const carrocelDOM = document.getElementById("carrocelEventos");
-
-    // trocar por um props que vai receber a quantidade de eventos
-    const quant = 4;
-
-    // Class que cria os eventos
-    const Evento = function (posi, id) {
-      this.posi = posi;
-      this.id = id;
-    };
-
-    // criar os eventos no javascript
-    for (let i = 1; i <= quant; i++) {
-      const evento = new Evento(i, i);
-
-      ArrayEventos.push(evento);
-    }
-
-    // const evento1 = new Evento(1,1);
-
-    // criar objetos no DOM
-    ArrayEventos.map((el) => {
-      const novoEvento = document.createElement("div");
-
-      novoEvento.setAttribute("id", el.id);
-      novoEvento.classList.add("evento");
-      novoEvento.innerText = el.id;
-
-      carrocelDOM.appendChild(novoEvento);
-    });
-
-    let click_ativo = false;
-
-    carrocelDOM.addEventListener("mousedown", () => {
-      click_ativo = true;
-      console.log("clicando...");
-    });
-
-    carrocelDOM.addEventListener("mouseup", () => {
-      click_ativo = false;
-      console.log("parou de clicar");
-    });
-
-    setInterval
-
-    if(click_ativo == true){
-      carrocelDOM.addEventListener('mousemove',(el)=>{
-        console.log(el)
-      })
-    }
-
-    // let isDragging = false;
-    // let startPos = 0;
-    // let currentTranslate = 0;
-    // let prevTranslate = 0;
-    // let animationID;
-    // let currentIndex = 1;
-
-    // // Clona para loop contínuo
-    // const items = Array.from(carousel.children);
-    // const firstClone = items[0].cloneNode(true);
-    // const lastClone = items[items.length - 1].cloneNode(true);
-
-    // firstClone.setAttribute("id", "first-clone");
-    // lastClone.setAttribute("id", "last-clone");
-
-    // carousel.appendChild(firstClone);
-    // carousel.insertBefore(lastClone, items[0]);
-
-    // const allItems = document.querySelectorAll(".carousel-item");
-
-    // setPositionByIndex();
-
-    // function getItemWidth() {
-    //   const item = allItems[0];
-    //   const style = getComputedStyle(carousel);
-    //   const gap = parseInt(style.gap) || 0;
-    //   return item.clientWidth + gap;
-    // }
-
-    // // ------------------ Toque e Arrasto ------------------
-    // carousel.addEventListener("touchstart", touchStart);
-    // carousel.addEventListener("touchend", touchEnd);
-    // carousel.addEventListener("touchmove", touchMove);
-
-    // carousel.addEventListener("mousedown", touchStart);
-    // carousel.addEventListener("mouseup", touchEnd);
-    // carousel.addEventListener("mousemove", touchMove);
-    // carousel.addEventListener("mouseleave", touchEnd);
-
-    // function touchStart(event) {
-    //   isDragging = true;
-    //   startPos = getPositionX(event);
-    //   animationID = requestAnimationFrame(animation);
-    // }
-
-    // function touchMove(event) {
-    //   if (!isDragging) return;
-    //   const currentPosition = getPositionX(event);
-    //   currentTranslate = prevTranslate + currentPosition - startPos;
-    // }
-
-    // function touchEnd() {
-    //   cancelAnimationFrame(animationID);
-    //   isDragging = false;
-
-    //   const movedBy = currentTranslate - prevTranslate;
-    //   const threshold = getItemWidth() / 4;
-
-    //   if (movedBy < -threshold) {
-    //     currentIndex += 1;
-    //   }
-    //   if (movedBy > threshold) {
-    //     currentIndex -= 1;
-    //   }
-
-    //   setPositionByIndex();
-    // }
-
-    // function getPositionX(event) {
-    //   return event.type.includes("mouse")
-    //     ? event.pageX
-    //     : event.touches[0].clientX;
-    // }
-
-    // function animation() {
-    //   setCarouselPosition();
-    //   if (isDragging) requestAnimationFrame(animation);
-    // }
-
-    // function setCarouselPosition() {
-    //   carousel.style.transform = `translateX(${currentTranslate}px)`;
-    // }
-
-    // function setPositionByIndex() {
-    //   const itemWidth = getItemWidth();
-    //   currentTranslate = -itemWidth * currentIndex;
-    //   prevTranslate = currentTranslate;
-    //   setCarouselPosition();
-    //   carousel.style.transition = "transform 0.3s";
-
-    //   carousel.addEventListener("transitionend", checkIndex, { once: true });
-    // }
-
-    // function checkIndex() {
-    //   carousel.style.transition = "none";
-    //   const itemWidth = getItemWidth();
-
-    //   if (allItems[currentIndex].id === "first-clone") {
-    //     currentIndex = 1;
-    //     currentTranslate = -itemWidth * currentIndex;
-    //     prevTranslate = currentTranslate;
-    //     setCarouselPosition();
-    //   }
-    //   if (allItems[currentIndex].id === "last-clone") {
-    //     currentIndex = allItems.length - 2;
-    //     currentTranslate = -itemWidth * currentIndex;
-    //     prevTranslate = currentTranslate;
-    //     setCarouselPosition();
-    //   }
-    // }
-
-    // // ------------------ Botões ------------------
-    // nextButton.addEventListener("click", () => {
-    //   currentIndex++;
-    //   setPositionByIndex();
-    // });
-
-    // prevButton.addEventListener("click", () => {
-    //   currentIndex--;
-    //   setPositionByIndex();
-    // });
+    this.calcularLimites();
+    window.addEventListener('resize', this.calcularLimites);
   },
+  beforeDestroy() {
+    window.removeEventListener('resize', this.calcularLimites);
+    cancelAnimationFrame(this.animationId);
+  },
+  methods: {
+    calcularLimites() {
+      const containerWidth = this.$el.clientWidth;
+      const contentWidth = this.eventos.length * this.itemWidth;
+
+      // Se o conteúdo for menor que o container, centraliza
+      if (contentWidth <= containerWidth) {
+        this.currentTranslate = (containerWidth - contentWidth) / 2;
+        this.setTransform();
+      }
+    },
+
+    setTransform() {
+      this.$refs.carrossel.style.transform = `translateX(${this.currentTranslate}px)`;
+    },
+
+    startDrag(e) {
+      this.isDragging = true;
+      this.startPosX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
+      this.$refs.carrossel.style.transition = 'none';
+      this.$refs.carrossel.style.cursor = 'grabbing';
+    },
+
+    drag(e) {
+      if (!this.isDragging) return;
+
+      const currentX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
+      const moved = currentX - this.startPosX;
+      this.currentTranslate = this.prevTranslate + moved;
+
+      this.setTransform();
+    },
+
+    stopDrag() {
+      if (!this.isDragging) return;
+
+      this.isDragging = false;
+      this.prevTranslate = this.currentTranslate;
+      this.$refs.carrossel.style.transition = 'transform 0.3s ease';
+      this.$refs.carrossel.style.cursor = 'grab';
+
+      // Ajusta a posição se necessário
+      this.ajustarPosicao();
+    },
+
+    ajustarPosicao() {
+      const containerWidth = this.$el.clientWidth;
+      const contentWidth = this.eventos.length * this.itemWidth;
+
+      // Limites do carrossel
+      const maxTranslate = 0;
+      const minTranslate = containerWidth - contentWidth;
+
+      // Se o conteúdo for menor que o container, centraliza
+      if (contentWidth <= containerWidth) {
+        this.currentTranslate = (containerWidth - contentWidth) / 2;
+        this.setTransform();
+        return;
+      }
+
+      // Ajusta para os limites
+      this.currentTranslate = Math.max(minTranslate, Math.min(this.currentTranslate, maxTranslate));
+      this.prevTranslate = this.currentTranslate;
+
+      // Atualiza o índice atual
+      this.currentIndex = Math.abs(Math.round(this.currentTranslate / this.itemWidth));
+
+      this.setTransform();
+    },
+
+    mover(direction) {
+      const containerWidth = this.$el.clientWidth;
+      const visibleItems = Math.floor(containerWidth / this.itemWidth);
+      const maxIndex = Math.max(0, this.eventos.length - visibleItems);
+
+      this.currentIndex = Math.max(0, Math.min(this.currentIndex + direction, maxIndex));
+      this.currentTranslate = -this.currentIndex * this.itemWidth;
+      this.prevTranslate = this.currentTranslate;
+
+      this.$refs.carrossel.style.transition = 'transform 0.3s ease';
+      this.setTransform();
+    },
+
+    // Métodos para touch (usam os mesmos métodos com verificações de touch)
+    startTouch(e) {
+      this.startDrag(e);
+    },
+
+    touchMove(e) {
+      this.drag(e);
+    },
+
+    endTouch() {
+      this.stopDrag();
+    }
+  }
 };
 </script>
 
-<style>
-/* Os eventos tem que ser separado porque o javascrip não usa o scoped fazendo com que os novos eventos criados não tenham o estilo */
+<style scoped>
+.carrossel-container {
+  position: relative;
+  width: 100%;
+  max-width: 99vw;
+  height: 150px;
+  margin-top: 15px;
+  overflow: hidden;
+}
+
+.carrossel-wrapper {
+  width: 100%;
+  height: 100%;
+}
+
+.carrossel {
+  display: flex;
+  align-items: center;
+  margin-left: 54px;
+  gap: 30px;
+  height: 100%;
+  cursor: grab;
+  will-change: transform;
+  padding: 0 20px;
+}
+
+.carrossel:active {
+  cursor: grabbing;
+}
+
 .evento {
+  user-select: none;
+  pointer-events: none;
   border-radius: 20px;
-  margin: 0 0px;
   min-width: 250px;
   height: 100%;
   max-height: 120px;
   background-color: rgb(0, 204, 255);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  color: white;
+  font-weight: bold;
 }
-</style>
 
-<style scoped>
-/* Cnfiguração dos botões */
 button {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  transform: translateY(-50%);
+  cursor: pointer;
+  background: rgba(0, 0, 0, 0.5);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  font-size: 1.2rem;
+  z-index: 10;
 }
 
-.btnVoltar {
+button:hover {
+  background: rgba(0, 0, 0, 0.8);
+}
+
+.btn-voltar {
   left: 10px;
 }
 
-.btnAvancar {
+.btn-avancar {
   right: 10px;
-}
-
-/* Configuração do bloco que segura o carrocel */
-.carrocel {
-  margin-top: 15px;
-  overflow: hidden;
-  position: relative;
-  max-width: 99vw;
-  height: 100%;
-}
-
-/* carrocel */
-#carrocelEventos {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-
-  gap: 30px;
-
-  width: 1000px;
-  height: 100%;
 }
 </style>

@@ -44,7 +44,7 @@
         </section>
       </section>
       <!-- botaão para reservar revistas -->
-      <button id="btnResevar" @click="clickReservar"></button>
+      <button id="btnReservar" @click="clickReservar"></button>
     </div>
   </div>
 </template>
@@ -102,7 +102,7 @@ export default {
     //     console.log(this.quant);
     //     // Atualiza o estado do botão imediatamente
     //     if (this.quant <= 0) {
-    //       document.getElementById("btnResevar").classList.add("bloqueado");
+    //       document.getElementById("btnReservar").classList.add("bloqueado");
     //     }
     //   }
     // },
@@ -134,9 +134,9 @@ export default {
       document.getElementById("PopUp").classList.remove("animacaoSaindo");
       document.getElementById("PopUp").classList.add("animacaoEntrando");
       if (this.quant <= 0) {
-        document.getElementById("btnResevar").classList.add("bloqueado");
+        document.getElementById("btnReservar").classList.add("bloqueado");
       } else {
-        document.getElementById("btnResevar").classList.remove("bloqueado");
+        document.getElementById("btnReservar").classList.remove("bloqueado");
       }
     }
   },
@@ -254,8 +254,8 @@ img {
   text-transform: uppercase;
 }
 
-#btnResevar {
-  grid-area: btnResevar;
+#btnReservar {
+  grid-area: btnReservar;
   width: 230px;
   height: 45px;
   border-radius: 10px;

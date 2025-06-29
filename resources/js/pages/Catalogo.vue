@@ -60,143 +60,14 @@ export default {
                 },
             });
         },
-
-        // função que cria as revistas com as suas informações
-        // criarrevistas() {
-        //   const quant = 101;
-
-        //   // Função construtora correta
-        //   function CriandoRevista(img, descricao, tema, numRevista, titulo) {
-        //     this.imgRevista = img;
-        //     // this.descricaoRevista = descricao;
-        //     this.temaRevista = tema;
-        //     this.quantRevista = numRevista;
-        //     this.tituloRevista = titulo;
-        //   }
-
-        // //   funções feitas apenas para teste, apagar depois
-        //   // function txt() {
-        //   //   const n = Math.floor(Math.random() * 5) + 1;
-        //   //   if (n == 1) {
-        //   //     return `Lorem ipsum dolor sit amet consectetur adipisicing elit. Omnis
-        //   //       voluptatum voluptatibus expedita ipsum aut sequi libero? Blanditiis
-        //   //       vel error perspiciatis similique. Illo deserunt amet tempora
-        //   //       officiis aspernatur esse adipisci eveniet? Lorem ipsum dolor sit
-        //   //       amet consectetur adipisicing elit. Omnis voluptatum voluptatibus
-        //   //       expedita ipsum aut sequi libero? Blanditiis vel error perspiciatis
-        //   //       Lorem ipsum dolor sit amet consectetur adipisicing elit. Omnis
-        //   //       voluptatum voluptatibus expedita ipsum aut sequi libero? Blanditiis
-        //   //       vel error perspiciatis similique. Illo deserunt amet tempora
-        //   //       officiis aspernatur esse adipisci eveniet? Lorem ipsum dolor sit
-        //   //       amet consectetur adipisicing elit. Omnis voluptatum voluptatibus
-        //   //       expedita ipsum aut sequi libero? Blanditiis vel error perspiciatis`;
-        //   //   } else if (n == 2) {
-        //   //     return `            Lorem ipsum dolor sit amet consectetur adipisicing elit. Omnis
-        //   //       voluptatum voluptatibus expedita ipsum aut sequi libero? Blanditiis
-        //   //       vel error perspiciatis similique. Illo deserunt amet tempora
-        //   //       officiis aspernatur esse adipisci eveniet? Lorem ipsum dolor sit
-        //   //       amet consectetur adipisicing elit. Omnis voluptatum voluptatibus
-        //   //       expedita ipsum aut sequi libero? Blanditiis vel error perspiciatis
-        //   //       Lorem ipsum dolor sit amet consectetur adipisicing elit. Omnis
-        //   //       voluptatum voluptatibus expedita ipsum aut sequi libero? Blanditiis
-        //   //       vel error perspiciatis similique. Illo deserunt amet tempora
-        //   //       officiis aspernatur esse adipisci eveniet? Lorem ipsum dolor sit
-        //   //       amet consectetur adipisicing elit. Omnis voluptatum voluptatibus
-        //   //       expedita ipsum aut sequi libero? Blanditiis vel error perspiciatis            Lorem ipsum dolor sit amet consectetur adipisicing elit. Omnis
-        //   //       voluptatum voluptatibus expedita ipsum aut sequi libero? Blanditiis
-        //   //       vel error perspiciatis similique. Illo deserunt amet tempora
-        //   //       officiis aspernatur esse adipisci eveniet? Lorem ipsum dolor sit
-        //   //       amet consectetur adipisicing elit. Omnis voluptatum voluptatibus
-        //   //       expedita ipsum aut sequi libero? Blanditiis vel error perspiciatis
-        //   //       Lorem ipsum dolor sit amet consectetur adipisicing elit. Omnis
-        //   //       voluptatum voluptatibus expedita ipsum aut sequi libero? Blanditiis
-        //   //       vel error perspiciatis similique. Illo deserunt amet tempora
-        //   //       officiis aspernatur esse adipisci eveniet? Lorem ipsum dolor sit
-        //   //       amet consectetur adipisicing elit. Omnis voluptatum voluptatibus
-        //   //       expedita ipsum aut sequi libero? Blanditiis vel error perspiciatis`;
-        //   //   } else if (n == 3) {
-        //   //     return `            expedita ipsum aut sequi libero? Blanditiis vel error perspiciatis
-        //   //       Lorem ipsum dolor sit amet consectetur adipisicing elit. Omnis
-        //   //       voluptatum voluptatibus expedita ipsum aut sequi libero? Blanditiis
-        //   //       vel error perspiciatis similique. Illo deserunt amet tempora
-        //   //       officiis aspernatur esse adipisci eveniet? Lorem ipsum dolor sit
-        //   //       amet consectetur adipisicing elit. Omnis voluptatum voluptatibus
-        //   //       expedita ipsum aut sequi libero? Blanditiis vel error perspiciatis            expedita ipsum aut sequi libero? Blanditiis vel error perspiciatis
-        //   //       Lorem ipsum dolor sit amet consectetur adipisicing elit. Omnis
-        //   //       voluptatum voluptatibus expedita ipsum aut sequi libero? Blanditiis
-        //   //       vel error perspiciatis similique. Illo deserunt amet tempora
-        //   //       officiis aspernatur esse adipisci eveniet? Lorem ipsum dolor sit
-        //   //       amet consectetur adipisicing elit. Omnis voluptatum voluptatibus
-        //   //       expedita ipsum aut sequi libero? Blanditiis vel error perspiciatis            expedita ipsum aut sequi libero? Blanditiis vel error perspiciatis
-        //   //       Lorem ipsum dolor sit amet consectetur adipisicing elit. Omnis
-        //   //       voluptatum voluptatibus expedita ipsum aut sequi libero? Blanditiis
-        //   //       vel error perspiciatis similique. Illo deserunt amet tempora
-        //   //       officiis aspernatur esse adipisci eveniet? Lorem ipsum dolor sit
-        //   //       amet consectetur adipisicing elit. Omnis voluptatum voluptatibus
-        //   //       expedita ipsum aut sequi libero? Blanditiis vel error perspiciatis`;
-        //   //   } else if (n == 4) {
-        //   //     return `adipisicing elit. Omnis
-        //   //       voluptatum voluptatibus expedita ipsum aut sequi libero? Blanditiis
-        //   //       vel error perspiciatis similique. Illo deserunt amet tempora
-        //   //       officiis aspernatur esse adipisci eveniet? Lorem ipsum dolor sit
-        //   //       amet consectetur adipisicing elit. Omnis voluptatum voluptatibus
-        //   //       expedita ipsum aut sequi libero? Blanditiis vel error perspiciatis     adipisicing elit. Omnis
-        //   //       voluptatum voluptatibus expedita ipsum aut sequi libero? Blanditiis
-        //   //       vel error perspiciatis similique. Illo deserunt amet tempora
-        //   //       officiis aspernatur esse adipisci eveniet? Lorem ipsum dolor sit
-        //   //       amet consectetur adipisicing elit. Omnis voluptatum voluptatibus
-        //   //       expedita ipsum aut sequi libero? Blanditiis vel error perspiciatis     adipisicing elit. Omnis
-        //   //       voluptatum voluptatibus expedita ipsum aut sequi libero? Blanditiis
-        //   //       vel error perspiciatis similique. Illo deserunt amet tempora
-        //   //       officiis aspernatur esse adipisci eveniet? Lorem ipsum dolor sit
-        //   //       amet consectetur adipisicing elit. Omnis voluptatum voluptatibus
-        //   //       expedita ipsum aut sequi libero? Blanditiis vel error perspiciatis     adipisicing elit. Omnis
-        //   //       voluptatum voluptatibus expedita ipsum aut sequi libero? Blanditiis
-        //   //       vel error perspiciatis similique. Illo deserunt amet tempora
-        //   //       officiis aspernatur esse adipisci eveniet? Lorem ipsum dolor sit
-        //   //       amet consectetur adipisicing elit. Omnis voluptatum voluptatibus
-        //   //       expedita ipsum aut sequi libero? Blanditiis vel error perspiciatis     adipisicing elit. Omnis
-        //   //       voluptatum voluptatibus expedita ipsum aut sequi libero? Blanditiis
-        //   //       vel error perspiciatis similique. Illo deserunt amet tempora
-        //   //       officiis aspernatur esse adipisci eveniet? Lorem ipsum dolor sit
-        //   //       amet consectetur adipisicing elit. Omnis voluptatum voluptatibus
-        //   //       expedita ipsum aut sequi libero? Blanditiis vel error perspiciatis     `;
-        //   //   } else {
-        //   //     return `error perspiciatis     adipisicing elit. Omnis
-        //   //       voluptatum voluptatibus expedita ipsum aut sequi libero? Blanditiis
-        //   //       vel error perspiciatis similique. Illo deserunt amet tempora
-        //   //       officiis aspernatur esse adipisci eveniet? Lorem ipsum dolor sit
-        //   //       amet consectetur adipisicing elit. Omnis voluptatum voluptatibus
-        //   //       expedita ipsum aut sequi libero? Blanditiis vel error perspiciatis     adipisicing elit. Omnis
-        //   //       voluptatum voluptatibus expedita ipsum aut sequi libero? Blanditiis
-        //   //       vel error perspiciatis similique. Illo deserunt amet tempora
-        //   //       officiis aspernatur esse adipisci eveniet? Lorem ipsum dolor sit
-        //   //       amet consectetur adipi`;
-        //   //   }
-        //   // }
-
-        //   // function num() {
-        //   //   const n = Math.floor(Math.random() * 5);
-        //   //   return n;
-        //   // }
-
-        //   // Inicializa o array se ainda não existir
-        //   // for (let i = 0; i < quant; i++) {
-        //   //   let novaRevista = new CriandoRevista(
-        //   //     "a",
-        //   //     txt(),
-        //   //     "aleatório",
-        //   //     num(),
-        //   //     "testando"
-        //   //   );
-        //   //   this.revistas.push(novaRevista);
-        //   // }
-        // },
         clickMenu(active) {
             this.menuActive = active;
         },
+            // função para diminuir a quantidade de revista na interface
+    diminuirQuantidade(){
+        this.dadosPopUp.quantPopUp -= 1;
+    }
     },
-    mounted() {},
     beforeMount() {
         // console.log(novaRevista);
         // this.criarrevistas();
@@ -216,6 +87,7 @@ export default {
             v-show="showPopUp"
             :active="showPopUp"
             @desativar="this.showPopUp = !this.showPopUp"
+            @diminuir-quantidade="diminuirQuantidade"
             :titulo="dadosPopUp.tituloPopUp"
             :img="dadosPopUp.imgPopUp"
             :descricao="dadosPopUp.descricaoPopUp"
@@ -238,7 +110,7 @@ export default {
                 :key="revista.id"
                 @click="estadoPopUp(revista.id)"
             ></cpRevista>
-        </div>
+            </div>
     </div>
 </template>
 

@@ -44,16 +44,7 @@
         </section>
       </section>
       <!-- botaão para reservar revistas -->
-           
-      <button class="btnReservar" id="btnHabilidado"  v-if="reservar">
-        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M9 11L12 14L22 4M16 3H7.8C6.11984 3 5.27976 3 4.63803 3.32698C4.07354 3.6146 3.6146 4.07354 3.32698 4.63803C3 5.27976 3 6.11984 3 7.8V16.2C3 17.8802 3 18.7202 3.32698 19.362C3.6146 19.9265 4.07354 20.3854 4.63803 20.673C5.27976 21 6.11984 21 7.8 21H16.2C17.8802 21 18.7202 21 19.362 20.673C19.9265 20.3854 20.3854 19.9265 20.673 19.362C21 18.7202 21 17.8802 21 16.2V12" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg>
-      </button>
-
-      <button class="btnReservar" id="btnDesabilitado" v-else>
-        <svg viewBox="-4 0 32 32" xmlns="http://www.w3.org/2000/svg" fill="var(--cor3)"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <g id="Lager_45" data-name="Lager 45" transform="translate(-4)"> <g id="Group_16" data-name="Group 16"> <path id="Path_53" data-name="Path 53" d="M26,12H24V7h-.069A7.993,7.993,0,0,0,8.069,7H8v5H6a2,2,0,0,0-2,2V30a2,2,0,0,0,2,2H26a2,2,0,0,0,2-2V14A2,2,0,0,0,26,12ZM12,8a4,4,0,0,1,8,0v4H12ZM23,28H9a1,1,0,0,1-1-1V17a1,1,0,0,1,1-1H23a1,1,0,0,1,1,1V27A1,1,0,0,1,23,28Z" fill="var(--cor3)"></path> <circle id="Ellipse_1" data-name="Ellipse 1" cx="2" cy="2" r="2" transform="translate(14 20)" fill="var(--cor3)"></circle> </g> </g> </g></svg>
-      </button>
-
-
+      <button id="btnResevar" @click="clickReservar"></button>
     </div>
   </div>
 </template>
@@ -61,6 +52,8 @@
 <script>
 import titulo from "@/components/ComponentTitulos.vue";
 import subtitulo from "@/components/ComponentSubtitulo.vue";
+import { toast } from "vue3-toastify";
+import "vue3-toastify/dist/index.css";
 
 export default {
   name: "popUp",
@@ -86,7 +79,7 @@ export default {
     tema: String,
     quant: Number,
     titulo: String,
-    img: String
+    img: String,
   },
   methods: {
     // função feita para desativar o elemento e ativar de novo a barra de rolagem no fundo
@@ -97,22 +90,54 @@ export default {
         document.body.style.overflow = "";
       }, 190);
     },
-  },
-  watch:{
-    quant(newValue){
-      this.reservar = newValue > 0;
-    }
-  },  
-  beforeMount() {
-    this.reservar = this.quant > 0;
-    console.log(this.reservar)
+    // Promisse falsa para fazer teste, colocar uma de verdade depois
+    //   trocando o que ele retorna você pode analizar as duas funções resolve ou reject
+    functionThatReturnPromise() {
+      return new Promise((resolve, reject) => setTimeout(resolve, 3000));
+    },
+    // remover uma revista após ela ser reservada.
+    // resevarRevista() {
+    //   if (this.quant > 0) {
+    //     this.quant -= 1;
+    //     console.log(this.quant);
+    //     // Atualiza o estado do botão imediatamente
+    //     if (this.quant <= 0) {
+    //       document.getElementById("btnResevar").classList.add("bloqueado");
+    //     }
+    //   }
+    // },
+    clickReservar() {
+      toast
+        .promise(
+          this.functionThatReturnPromise,
+          {
+            pending: "Fazendo pedido",
+            success: "Pedido Feito!",
+            error: "Tente novamente",
+          },
+          {
+            theme: "auto",
+            autoClose: 2000,
+            transition: "slide",
+            dangerouslyHTMLString: true,
+          }
+        )
+        .then(() => {
+          this.$emit("diminuir-quantidade"); // Informa o componente pai que o quant foi reduzido
+        });
+    },
   },
   updated() {
     // quando o component for mostrado ele desativara o scroll
     if (this.active) {
       document.body.style.overflow = "hidden";
-            document.getElementById("PopUp").classList.remove("animacaoSaindo");
-                        document.getElementById("PopUp").classList.add("animacaoEntrando");
+      document.getElementById("PopUp").classList.remove("animacaoSaindo");
+      document.getElementById("PopUp").classList.add("animacaoEntrando");
+      if (this.quant <= 0) {
+        document.getElementById("btnResevar").classList.add("bloqueado");
+      } else {
+        document.getElementById("btnResevar").classList.remove("bloqueado");
+      }
     }
   },
 };
@@ -185,24 +210,7 @@ export default {
   border-radius: 10px;
   top: 20px;
   right: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: none;
-  
 }
-
-#btnFechar svg{
-  width: 70%;
-  height: 70%;
-}
-
-
-#btnFechar svg path{
-  fill: var(--cor1);
-}
-
-
 
 img {
   grid-area: img;
@@ -246,35 +254,18 @@ img {
   text-transform: uppercase;
 }
 
-.btnReservar {
-  grid-area: btnReservar;
-  width: 150px;
-  height: 50px;
+#btnResevar {
+  grid-area: btnResevar;
+  width: 230px;
+  height: 45px;
   border-radius: 10px;
   margin: 0 auto;
   margin-bottom: 30px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  display: none;
+  cursor: pointer;
+  background-color: rgb(20, 165, 20);
 }
-
-.btnReservar svg{
-  width: 30px;
+.bloqueado {
+  background-color: red !important;
+  pointer-events: none;
 }
-
-.btnReservar svg path{
-  stroke: var(--cor3);
-}
-
-#btnHabilidado{
-  background: #038273;
-  display: flex;
-}
-
-#btnDesabilitado{
-  display: flex;
-  background: #AC1717;
-}
-
 </style>

@@ -192,6 +192,10 @@ export default {
     clickMenu(active) {
       this.menuActive = active;
     },
+    // função para diminuir a quantidade de revista na interface
+    diminuirQuantidade(){
+        this.dadosPopUp.quantPopUp -= 1;
+    }
   },
   mounted() {
   },
@@ -209,6 +213,7 @@ export default {
       v-show="showPopUp"
       :active="showPopUp"
       @desativar="estadoPopUp"
+      @diminuir-quantidade="diminuirQuantidade"
 
       :titulo="dadosPopUp.tituloPopUp"
       :img="dadosPopUp.imgPopUp"

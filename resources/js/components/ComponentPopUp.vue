@@ -43,7 +43,7 @@
       </section>
 
       <!-- botaão para reservar revistas -->
-      <button id="btnResevar"></button>
+      <button id="btnResevar" @click="clickReservar"></button>
     </div>
   </div>
 </template>
@@ -51,6 +51,8 @@
 <script>
 import titulo from "@/components/ComponentTitulos.vue";
 import subtitulo from "@/components/ComponentSubtitulo.vue";
+import { toast } from "vue3-toastify";
+import "vue3-toastify/dist/index.css";
 
 export default {
   name: "popUp",
@@ -75,7 +77,7 @@ export default {
     tema: String,
     quant: Number,
     titulo: String,
-    img: String
+    img: String,
   },
   methods: {
     // função feita para desativar o elemento e ativar de novo a barra de rolagem no fundo
@@ -86,13 +88,54 @@ export default {
         document.body.style.overflow = "";
       }, 190);
     },
+    // Promisse falsa para fazer teste, colocar uma de verdade depois
+    //   trocando o que ele retorna você pode analizar as duas funções resolve ou reject
+    functionThatReturnPromise() {
+      return new Promise((resolve, reject) => setTimeout(resolve, 3000));
+    },
+    // remover uma revista após ela ser reservada.
+    // resevarRevista() {
+    //   if (this.quant > 0) {
+    //     this.quant -= 1;
+    //     console.log(this.quant);
+    //     // Atualiza o estado do botão imediatamente
+    //     if (this.quant <= 0) {
+    //       document.getElementById("btnResevar").classList.add("bloqueado");
+    //     }
+    //   }
+    // },
+    clickReservar() {
+      toast
+        .promise(
+          this.functionThatReturnPromise,
+          {
+            pending: "Fazendo pedido",
+            success: "Pedido Feito!",
+            error: "Tente novamente",
+          },
+          {
+            theme: "auto",
+            autoClose: 2000,
+            transition: "slide",
+            dangerouslyHTMLString: true,
+          }
+        )
+        .then(() => {
+          this.$emit("diminuir-quantidade"); // Informa o componente pai que o quant foi reduzido
+        });
+    },
   },
   updated() {
     // quando o component for mostrado ele desativara o scroll
     if (this.active) {
       document.body.style.overflow = "hidden";
-            document.getElementById("PopUp").classList.remove("animacaoSaindo");
-                        document.getElementById("PopUp").classList.add("animacaoEntrando");
+      document.getElementById("PopUp").classList.remove("animacaoSaindo");
+      document.getElementById("PopUp").classList.add("animacaoEntrando");
+      if (this.quant <= 0) {
+        document.getElementById("btnResevar").classList.add("bloqueado");
+      } else {
+        document.getElementById("btnResevar").classList.remove("bloqueado");
+      }
     }
   },
   //   beforeUpdate () {
@@ -210,11 +253,16 @@ img {
 
 #btnResevar {
   grid-area: btnResevar;
-  background-color: red;
   width: 230px;
   height: 45px;
   border-radius: 10px;
   margin: 0 auto;
   margin-bottom: 30px;
+  cursor: pointer;
+  background-color: rgb(20, 165, 20);
+}
+.bloqueado {
+  background-color: red !important;
+  pointer-events: none;
 }
 </style>

@@ -66,14 +66,13 @@
 
 
 <style scoped>
-    body,html,#app{
-        color: black;
-        width: 100%;
+    #pg-inicio{
         height: 100%;
+        color: black;
         background-color: var(--corFundoPrincipal);
     }
 
-    #app{
+    #pg-inicio{
         display: grid;
         grid-template-areas:
         'header'

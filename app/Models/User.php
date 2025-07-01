@@ -22,6 +22,7 @@ class User extends Authenticatable
         'nivel',
         'state',
         'telefone',
+        'turma',
         'name',
         'email',
         'password',

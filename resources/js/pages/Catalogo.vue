@@ -13,6 +13,7 @@ export default {
             menuActive: false,
             showPopUp: false,
             dadosPopUp: {
+                idRevista: null,
                 imgPopUp: "semImagem",
                 descricaoPopUp: "nenhuma",
                 temaPopUp: "nenhum",
@@ -39,7 +40,8 @@ export default {
         dadosRevista: Object,
     },
     methods: {
-        infoPopUp() {
+        infoPopUp(idRevista) {
+            this.dadosPopUp.idRevista = idRevista;
             this.dadosPopUp.imgPopUp = this.dadosRevista.imgPopUp;
             this.dadosPopUp.descricaoPopUp = this.dadosRevista.descricaoPopUp;
             this.dadosPopUp.temaPopUp = this.dadosRevista.temaPopUp;
@@ -55,7 +57,7 @@ export default {
 
             form.post("/catalogo/revista", {
                 onSuccess: () => {
-                    this.infoPopUp();
+                    this.infoPopUp(idRevista);
                     this.showPopUp = !this.showPopUp;
                 },
             });
@@ -221,6 +223,7 @@ export default {
             :descricao="dadosPopUp.descricaoPopUp"
             :quant="dadosPopUp.quantPopUp"
             :tema="dadosPopUp.temaPopUp"
+            :idRevista="dadosPopUp.idRevista"
         ></pop-up>
         <header>
             <Menu :active="menuActive" page="1" />

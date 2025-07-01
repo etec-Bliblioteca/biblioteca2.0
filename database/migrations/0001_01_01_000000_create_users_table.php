@@ -13,10 +13,11 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->integer('rm');
+            $table->integer('rm')->unique();
             $table->integer('nivel'); //1 - Admin | 0 - User
             $table->string('state');
             $table->string('name');
+            $table->string('turma');
             $table->string('email')->unique();
             $table->string('password');
             $table->bigInteger('telefone');

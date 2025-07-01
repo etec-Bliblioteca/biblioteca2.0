@@ -7,7 +7,7 @@ import imgPerfil from "../components/ComponentImgPerfil.vue";
 import btnMenu from "../components/ComponentBtnMenu.vue";
 import Menu from "../components/ComponentMenu.vue";
 export default {
-    name: "inicio",
+    name: "Perfil",
     data() {
         return {
             menuActive: false,
@@ -17,7 +17,6 @@ export default {
         };
     },
     props: {
-        User: Object,
     },
     components: {
         Menu,
@@ -39,7 +38,7 @@ export default {
     <div id="pg-inicio">
         <!-- topo da página -->
         <header>
-            <Menu :active="menuActive" page="0" :user="User"/>
+            <Menu :active="menuActive" page="4" :user="User"/>
             <!-- botão de menu -->
             <btnMenu @clickMenu="clickMenu"></btnMenu>
             <!-- Icone de Perfil -->

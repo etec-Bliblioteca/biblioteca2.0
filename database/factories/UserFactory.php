@@ -28,6 +28,7 @@ class UserFactory extends Factory
             'nivel' => 1,
             'state' => 'ativo',
             'name' => "admin",
+            'turma' => "test turma",
             'email' => 'admin@gmail.com',
             'password' => 'admin',
             'telefone' => 11949335503, //TOCAR DEPOIS EIN

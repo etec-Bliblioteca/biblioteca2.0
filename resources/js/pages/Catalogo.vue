@@ -13,7 +13,6 @@ export default {
             menuActive: false,
             showPopUp: false,
             dadosPopUp: {
-                idRevista: null,
                 imgPopUp: "semImagem",
                 descricaoPopUp: "nenhuma",
                 temaPopUp: "nenhum",
@@ -40,8 +39,7 @@ export default {
         dadosRevista: Object,
     },
     methods: {
-        infoPopUp(idRevista) {
-            this.dadosPopUp.idRevista = idRevista;
+        infoPopUp() {
             this.dadosPopUp.imgPopUp = this.dadosRevista.imgPopUp;
             this.dadosPopUp.descricaoPopUp = this.dadosRevista.descricaoPopUp;
             this.dadosPopUp.temaPopUp = this.dadosRevista.temaPopUp;
@@ -49,15 +47,15 @@ export default {
             this.dadosPopUp.tituloPopUp = this.dadosRevista.tituloPopUp;
         },
 
-        // função que muda o estado do pop up
-        estadoPopUp(idRevista) {
-            const form = useForm({
-                idRevista: idRevista,
-            });
+    // função que muda o estado do pop up
+    estadoPopUp(idRevista) {
+      const form = useForm({
+        idRevista: idRevista,
+      });
 
             form.post("/catalogo/revista", {
                 onSuccess: () => {
-                    this.infoPopUp(idRevista);
+                    this.infoPopUp();
                     this.showPopUp = !this.showPopUp;
                 },
             });
@@ -223,7 +221,6 @@ export default {
             :descricao="dadosPopUp.descricaoPopUp"
             :quant="dadosPopUp.quantPopUp"
             :tema="dadosPopUp.temaPopUp"
-            :idRevista="dadosPopUp.idRevista"
         ></pop-up>
         <header>
             <Menu :active="menuActive" page="1" />
@@ -247,31 +244,31 @@ export default {
 
 <style scoped>
 #pg-catalogo {
-    display: grid;
-    grid-template-areas:
-        "header"
-        "catalogo";
-    grid-template-rows: 240px;
-    height: auto;
+  display: grid;
+  grid-template-areas:
+    "header"
+    "catalogo";
+  grid-template-rows: 240px;
+  height: auto;
 }
 
 #catalogo {
-    grid-area: catalogo;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 20px;
-    flex-wrap: wrap;
-    height: auto;
-    margin-bottom: 20px;
+  grid-area: catalogo;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  height: auto;
+  margin-bottom: 20px;
 }
 
 header {
-    grid-area: header;
-    padding-top: 25px;
-    width: 100%;
-    display: flex;
-    align-items: center;
-    flex-direction: column;
+  grid-area: header;
+  padding-top: 25px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
 }
 </style>

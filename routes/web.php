@@ -5,6 +5,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\CatalogoController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RevistaController;
+use App\Models\Revista;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -14,6 +15,8 @@ Route::get('/', [LoginController::class,"index"])->name('index');
 Route::get('/catalogo',[CatalogoController::class,"index"])->name('catalogo');
 
 Route::post('/catalogo/revista',[CatalogoController::class,"show"])->name('catalogoRevista');
+
+Route::post('/revistas/{id}/reservar', [RevistaController::class, 'reservar']);
 
 
 Route::get('/catalogo/revista',function(){

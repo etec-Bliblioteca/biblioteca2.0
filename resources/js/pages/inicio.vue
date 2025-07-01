@@ -65,24 +65,22 @@ export default {
 </template>
 
 <style scoped>
-body,
-html,
-#app {
-    color: black;
-    width: 100%;
-    height: 100%;
-    background-color: var(--corFundoPrincipal);
-}
+    body,html,#app{
+        color: black;
+        width: 100%;
+        height: 100%;
+        background-color: var(--corFundoPrincipal);
+    }
 
-#app {
-    display: grid;
-    grid-template-areas:
-        "header"
-        "eventos"
-        "revistasNovas"
-        "botões";
-    grid-template-rows: auto 1fr 1.6fr 0.25fr;
-}
+    #app{
+        display: grid;
+        grid-template-areas:
+        'header'
+        'eventos'
+        'revistasNovas'
+        'botões';
+        grid-template-rows: auto 1fr 1.6fr 0.25fr;
+    }
 
 #caixaBotões {
     display: flex;

@@ -10,16 +10,15 @@ use Inertia\Inertia;
 
 class LoginController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    //USUARIO ATUAL
+    private $userData;
     public function index()
     {
         $user = Auth::user();
         if($user){
-            $userData = ['id'=>$user->id,'rm'=>$user->rm,"name"=>$user->name];
+            $this->userData = ['id'=>$user->id,'rm'=>$user->rm,"name"=>$user->name];
 
-            return Inertia::render('inicio',['User'=>$userData]);
+            return Inertia::render('inicio',['User'=>$this->userData]);
         }
 
         return Inertia::render('inicio',['User'=>['id'=>null]]);

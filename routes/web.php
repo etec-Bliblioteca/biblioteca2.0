@@ -3,6 +3,7 @@
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\CatalogoController;
+use App\Http\Controllers\PerfilController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RevistaController;
 use App\Models\Revista;
@@ -24,9 +25,7 @@ Route::get('/catalogo/revista',function(){
 });
 
 
-Route::get("/perfil",function(){
-    return Inertia::render("Perfil");
-})->name('perfil');
+Route::get("/perfil",[PerfilController::class,'index'])->name('perfil');
 
 // Rota para os administradores
 Route::group(['prefix' => 'admin'],function(){

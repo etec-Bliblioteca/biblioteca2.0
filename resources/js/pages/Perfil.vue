@@ -11,12 +11,10 @@ export default {
     data() {
         return {
             menuActive: false,
-            // Pega esses titulos e joga em um props depois
-            titulo1: "Eventos",
-            titulo2: "Revistas Novas",
         };
     },
     props: {
+        User:Object,
     },
     components: {
         Menu,
@@ -41,25 +39,8 @@ export default {
             <Menu :active="menuActive" page="4" :user="User"/>
             <!-- botão de menu -->
             <btnMenu @clickMenu="clickMenu"></btnMenu>
-            <!-- Icone de Perfil -->
-            <img-perfil></img-perfil>
         </header>
-        <!-- Corrocel de eventos -->
-        <section id="carrocelEventosLugar">
-            <subtitulosPrincipais :nomeTitulo="titulo1"></subtitulosPrincipais>
-            <carrocelEventos></carrocelEventos>
-        </section>
-        <!-- revistas novas -->
-        <section id="carrocelRevistasNovasLugar">
-            <subtitulosPrincipais :nomeTitulo="titulo2"></subtitulosPrincipais>
-            <carrocelRevistasNovas></carrocelRevistasNovas>
-        </section>
-        <!-- botões para navegar entre as páginas -->
-        <div id="caixaBotões">
-            <btnMudarPg></btnMudarPg>
-            <btnMudarPg></btnMudarPg>
-            <btnMudarPg></btnMudarPg>
-        </div>
+
     </div>
 </template>
 

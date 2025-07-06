@@ -107,6 +107,7 @@ export default {
 
 #carrocelRevistasNovasLugar {
     display: flex;
+    height: 350px;
     align-items: center;
     justify-content: flex-end;
     flex-direction: column;

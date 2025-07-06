@@ -61,16 +61,7 @@
         </section>
       </section>
       <!-- botaão para reservar revistas -->
-           
-      <button class="btnReservar" id="btnHabilidado"  v-if="reservar" @click="$emit('reservarRevista')">
-        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M9 11L12 14L22 4M16 3H7.8C6.11984 3 5.27976 3 4.63803 3.32698C4.07354 3.6146 3.6146 4.07354 3.32698 4.63803C3 5.27976 3 6.11984 3 7.8V16.2C3 17.8802 3 18.7202 3.32698 19.362C3.6146 19.9265 4.07354 20.3854 4.63803 20.673C5.27976 21 6.11984 21 7.8 21H16.2C17.8802 21 18.7202 21 19.362 20.673C19.9265 20.3854 20.3854 19.9265 20.673 19.362C21 18.7202 21 17.8802 21 16.2V12" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg>
-      </button>
-
-      <button class="btnReservar" id="btnDesabilitado" v-else>
-        <svg viewBox="-4 0 32 32" xmlns="http://www.w3.org/2000/svg" fill="var(--cor3)"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <g id="Lager_45" data-name="Lager 45" transform="translate(-4)"> <g id="Group_16" data-name="Group 16"> <path id="Path_53" data-name="Path 53" d="M26,12H24V7h-.069A7.993,7.993,0,0,0,8.069,7H8v5H6a2,2,0,0,0-2,2V30a2,2,0,0,0,2,2H26a2,2,0,0,0,2-2V14A2,2,0,0,0,26,12ZM12,8a4,4,0,0,1,8,0v4H12ZM23,28H9a1,1,0,0,1-1-1V17a1,1,0,0,1,1-1H23a1,1,0,0,1,1,1V27A1,1,0,0,1,23,28Z" fill="var(--cor3)"></path> <circle id="Ellipse_1" data-name="Ellipse 1" cx="2" cy="2" r="2" transform="translate(14 20)" fill="var(--cor3)"></circle> </g> </g> </g></svg>
-      </button>
-
-
+      <button id="btnReservar" @click="clickReservar"></button>
     </div>
   </div>
 </template>
@@ -81,6 +72,7 @@ import titulo from "@/components/ComponentTitulos.vue";
 import subtitulo from "@/components/ComponentSubtitulo.vue";
 import { toast } from "vue3-toastify";
 import "vue3-toastify/dist/index.css";
+import { useForm } from "@inertiajs/vue3";
 
 export default {
   name: "popUp",
@@ -97,14 +89,13 @@ export default {
       reservando: false,
     };
   },
-  emits:['reservarRevista'],
   components: {
     titulo,
     subtitulo,
   },
   props: {
     // recebe o aviso se ele deve ser ativado ou não
-    idRevista: Number,
+    user: Object,
     active: Boolean,
     descricao: String,
     tema: String,
@@ -126,26 +117,25 @@ export default {
       }, 190);
     },
     // remover uma revista após ela ser reservada.
-    // resevarRevista() {
-    //   if (this.quant > 0) {
-    //     this.quant -= 1;
-    //     console.log(this.quant);
-    //     // Atualiza o estado do botão imediatamente
-    //     if (this.quant <= 0) {
-    //       document.getElementById("btnReservar").classList.add("bloqueado");
-    //     }
-    //   }
-    // },
-    clickReservar() {
-        // impede mais de uma requisição ao mesmo tempo e uma caso a quantidade seja 0
+    resevarRevista() {
       if (this.quant <= 0 || this.reservando) return;
-
       this.reservando = true;
-
-    //   toast que faz a o pedido de forma assincrona para o serve
+      if (this.quant > 0) {
+        this.quant -= 1;
+        // Atualiza o estado do botão imediatamente
+        if (this.quant <= 0) {
+          document.getElementById("btnReservar").classList.add("bloqueado");
+        }
+      }
+    },
+    clickReservar() {
+      //impede mais de uma requisição ao mesmo tempo e uma caso a quantidade seja 0
+      // VERIFICA SE O USER ESTA AGENDADO
+      if(this.user){
+        //toast que faz a o pedido de forma assincrona para o serve
       toast
         .promise(
-          axios.post(`/revistas/${this.idRevista}/reservar`),
+          axios.post(`/revistas/${this.idRevista}/${this.user.id}/reservar`),
           {
             pending: "Fazendo pedido...",
             success: "Reserva feita com sucesso!",
@@ -158,15 +148,19 @@ export default {
           }
         )
         .then((resposta) => {
-            // pega a nova quantidade e envia para o componet pai
-          const novaQuantidade = resposta.data.novaQuantidade;
-          this.$emit("quantidade-atualizada", novaQuantidade);
+            // pega a nova quantidade e atualiza
+          this.qtdeRevista = resposta.data.novaQuantidade;
           this.reservando = false;
         })
         .catch((error) => {
-          console.error("Erro ao reservar:", error);
           this.reservando = false;
         });
+        return;
+      }
+
+      // ENVIAR PARA A PAGINA DE LOGIN
+      const form = useForm({});
+      form.submit('get','/login');
     },
   },
   updated() {
@@ -252,6 +246,7 @@ export default {
   border-radius: 10px;
   top: 20px;
   right: 20px;
+  background: none;
 }
 
 img {

@@ -13,6 +13,7 @@ export default {
             menuActive: false,
             showPopUp: false,
             dadosPopUp: {
+                idRevista: null,
                 imgPopUp: "semImagem",
                 descricaoPopUp: "nenhuma",
                 temaPopUp: "nenhum",
@@ -23,6 +24,7 @@ export default {
             //   quantRevitas e imgRevista tem que ser passado pelo props ou vindo direto do banco de dados
             collectionRevistas: this.collectionRevista,
             revistas: [],
+            user: this.User,
         };
     },
     components: {
@@ -40,7 +42,8 @@ export default {
         User:Object,
     },
     methods: {
-        infoPopUp() {
+        infoPopUp(idRevista) {
+            this.dadosPopUp.idRevista = idRevista;
             this.dadosPopUp.imgPopUp = this.dadosRevista.imgPopUp;
             this.dadosPopUp.descricaoPopUp = this.dadosRevista.descricaoPopUp;
             this.dadosPopUp.temaPopUp = this.dadosRevista.temaPopUp;
@@ -50,13 +53,12 @@ export default {
 
     // função que muda o estado do pop up
     estadoPopUp(idRevista) {
-      const form = useForm({
-        idRevista: idRevista,
-      });
-
+            const form = useForm({
+                idRevista: idRevista,
+            });
             form.post("/catalogo/revista", {
                 onSuccess: () => {
-                    this.infoPopUp();
+                    this.infoPopUp(idRevista);
                     this.showPopUp = !this.showPopUp;
                 },
             });
@@ -65,7 +67,6 @@ export default {
             this.menuActive = active;
         },
     },
-    mounted() {},
     beforeMount() {
         // console.log(novaRevista);
         // this.criarrevistas();
@@ -85,6 +86,8 @@ export default {
             v-show="showPopUp"
             :active="showPopUp"
             @desativar="this.showPopUp = !this.showPopUp"
+            :user="user"
+            :idRevista="dadosPopUp.idRevista"
             :titulo="dadosPopUp.tituloPopUp"
             :img="dadosPopUp.imgPopUp"
             :descricao="dadosPopUp.descricaoPopUp"

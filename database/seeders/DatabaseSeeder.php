@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             RevistaSeeder::class,
             UserSeeder::class,
+            AgendamentoSeeder::class,
         ]);
     }
 }

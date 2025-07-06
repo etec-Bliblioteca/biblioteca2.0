@@ -24,12 +24,9 @@ class CatalogoController
         }else{
             $this->userData = ['id'=>null];
         }
-
         //PEGAR AS REVISTAS
         $collectionRevistas = Revista::select('id', 'imagem')->limit(10)->get();
         // dd($collectionRevistas->toArray());
-
-
         return Inertia::render('Catalogo', ['collectionRevista' => $collectionRevistas->toArray(),"User"=>$this->userData]);
     }
 

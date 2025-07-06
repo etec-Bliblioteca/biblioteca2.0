@@ -30,7 +30,6 @@ export default {
 },
   mounted() {
     const links = [...document.querySelectorAll(".menuLink")];
-    console.log(links)
     if (links[this.page]) {
       links[this.page].classList.add("active");
     }

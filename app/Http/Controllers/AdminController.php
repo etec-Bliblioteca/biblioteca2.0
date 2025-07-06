@@ -8,9 +8,9 @@ use Inertia\Inertia;
 
 class AdminController extends Controller
 {
-    // PAGINA INICIAL DO ADMIn
+    // PAGINA INICIAL DO ADMIN
     public function index(Request $request){
-
+        
     }
 
     // PAGINA DE LIBERAÇÂO

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Revista;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class RevistaController extends Controller
@@ -59,25 +60,5 @@ class RevistaController extends Controller
     public function destroy(Revista $revista)
     {
         //
-    }
-
-    // função para reservar as revistas
-    public function reservar($id)
-    {
-        // procura ela no banco
-        $revista = Revista::findOrFail($id);
-
-        // Vê se ainda tem resvistas para ser reservadas
-        if ($revista->quantidade <= 0) {
-            // retorna erro
-            return response()->json(['error' => 'Sem exemplares disponíveis'], 400);
-        }
-
-        // Se tiver, ele retirar uma e salva
-        $revista->quantidade -= 1;
-        $revista->save();
-
-        // retorna a resposta para a página
-        return response()->json(['novaQuantidade' => $revista->quantidade]);
     }
 }

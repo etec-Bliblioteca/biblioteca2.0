@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Agendamento;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -12,6 +13,6 @@ class AgendamentoSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        Agendamento::factory()->count(1)->create();
     }
 }

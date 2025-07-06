@@ -13,12 +13,13 @@ return new class extends Migration
     {
         Schema::create('agendamentos', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('rm');
-            $table->foreign('rm')->references('id')->on('users');
-            $table->unsignedBigInteger('id_revistas');
-            $table->foreign('id_revistas')->references('id')->on('revistas');
+            $table->integer('rm');
+            $table->foreign('rm')->references('rm')->on('users')->cascade('delete')->cascade('update');
+            $table->unsignedBigInteger('id_revista');
+            $table->foreign('id')->references('id')->on('revistas')->cascade('delete')->cascade('update');
             $table->date('dt_pegar');
             $table->date('dt_devolver');
+            $table->boolean('state')->default(false);
             $table->timestamps();
         });
     }

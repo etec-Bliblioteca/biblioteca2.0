@@ -17,7 +17,7 @@ class RevistaFactory extends Factory
             'titulo'=> fake()->name(),
             'descricao' => fake()->paragraph(1),
             'tema' => fake()->name(),
-            'quantidade' => fake()->randomNumber(1),
+            'quantidade' => 5,
             'imagem' => "semImagem2.png",
             'edicao' => fake()->name(),
             'issn' => fake()->name(),

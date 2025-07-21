@@ -1,20 +1,18 @@
 <template>
-  <div class="corpo-revista">
-    <img :src="`../storage/images/${imgRevista}`"/>
-  </div>
+  <li class="corpo-revista">
+    <img :src="`../storage/images/${imgRevista}`" />
+  </li>
 </template>
 
 <script>
 export default {
-  name: "revista",
-  methods:{
-    emitClick(){
-        this.$emit('clickRevista');
-    }
+  name: "cpRevista",
+  props: {
+    imgRevista: {
+      type: String,
+      required: true,
+    },
   },
-  props:{
-    imgRevista: String,
-  }
 };
 </script>
 
@@ -24,11 +22,15 @@ export default {
   height: 230px;
 }
 
-img{
-    width: 100%;
-    height: 100%;
-    background-color: black;
-    border-radius: 5px;
-    outline: 2px solid var(--cor1);
+img {
+  width: 100%;
+  height: 100%;
+  background-color: black;
+  border-radius: 5px;
+  outline: 2px solid var(--cor1);
+}
+
+li {
+  list-style: none;
 }
 </style>

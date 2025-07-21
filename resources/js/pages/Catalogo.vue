@@ -6,12 +6,15 @@ import cpRevista from "../components/ComponentRevista.vue";
 import barraPesquisa from "../components/ComponentBarraPesquisa.vue";
 import popUp from "../components/ComponentPopUp.vue";
 import { useForm } from "@inertiajs/vue3";
+import prevPesquisa from "@/components/ComponentPrevPesquisa.vue";
+
 export default {
   name: "Catalogo",
-  data(props) {
+  data() {
     return {
       menuActive: false,
       showPopUp: false,
+      showCatalogo: true,
       dadosPopUp: {
         imgPopUp: "semImagem",
         descricaoPopUp: "nenhuma",
@@ -23,6 +26,8 @@ export default {
       //   quantRevitas e imgRevista tem que ser passado pelo props ou vindo direto do banco de dados
       collectionRevistas: this.collectionRevista,
       revistas: [],
+      prevRevistas: [],
+      msgErroPesquisa: "",
     };
   },
   components: {
@@ -32,6 +37,7 @@ export default {
     cpRevista,
     barraPesquisa,
     popUp,
+    prevPesquisa,
   },
   props: {
     desativar: Boolean,
@@ -39,6 +45,10 @@ export default {
     dadosRevista: Object,
   },
   methods: {
+    clickCpRevista(revista) {
+      this.estadoPopUp(revista);
+      this.dadosPopUp.id = revista;
+    },
     // objeto popup
     infoPopUp() {
       this.dadosPopUp.imgPopUp = this.dadosRevista.imgPopUp;
@@ -55,6 +65,7 @@ export default {
         idRevista: idRevista,
       });
 
+      //   envia o id da revista para o backend através de um post e coloca as informações no pop up antes dele ativar
       form.post("/catalogo/revista", {
         onSuccess: () => {
           this.infoPopUp();
@@ -62,8 +73,26 @@ export default {
         },
       });
     },
+    // função que ativa o menu
     clickMenu(active) {
       this.menuActive = active;
+    },
+    // função que apaga o catalogo e mostra a prévia da pesquisa
+    apagarCatalogo(dados) {
+      this.showCatalogo = !dados;
+    },
+    // função que recebe as revistas da pesquisa e as coloca na prévia
+    gerenciarPesquisa(revistas) {
+      revistas.map((revista) => {
+        this.prevRevistas.push(revista);
+      });
+    },
+    mostrarErro(erro) {
+      this.prevRevistas = [];
+      this.msgErroPesquisa = erro;
+    },
+    semPesquisa() {
+      this.prevRevistas = [];
     },
   },
   beforeMount() {
@@ -101,16 +130,30 @@ export default {
       <btnMenu @clickMenu="clickMenu"></btnMenu>
       <!-- Icone de Perfil -->
       <img-perfil></img-perfil>
-      <barraPesquisa></barraPesquisa>
+      <barraPesquisa
+        @pesquisando="apagarCatalogo"
+        @result-pesquisa="gerenciarPesquisa"
+        @sem-pesquisa="semPesquisa"
+        @erro-pesquisa="mostrarErro"
+        @limpar-prev="prevRevistas = []"
+      ></barraPesquisa>
     </header>
-    <div id="catalogo">
-      <!-- {{ criarrevistas() }} -->
-      <cpRevista
-        v-for="revista in revistas"
-        :imgRevista="revista.imagem"
-        :key="revista.id"
-        @click="estadoPopUp(revista.id), (dadosPopUp.id = revista.id)"
-      ></cpRevista>
+    <!-- prévia da pesquisa em tempo real -->
+    <div id="prevPesquisa">
+      <prevPesquisa v-if="!showCatalogo" :prevRevistas="prevRevistas" :msgErro="msgErroPesquisa"
+      @click-revista="clickCpRevista"/>
+    </div>
+    <!-- Catalogo -->
+    <div id="catalogo" v-if="showCatalogo">
+      <ul id="revistas">
+        <!-- revistas -->
+        <cpRevista
+          v-for="revista in revistas"
+          :imgRevista="revista.imagem"
+          :key="revista.id"
+          @click="clickCpRevista(revista.id)"
+        />
+      </ul>
     </div>
   </div>
 </template>
@@ -120,20 +163,29 @@ export default {
   display: grid;
   grid-template-areas:
     "header"
-    "catalogo";
+    "catalogo"
+    "prePesquisa";
   grid-template-rows: 240px;
+  height: auto;
+}
+
+#prevPesquisa {
+  grid-area: prePesquisa;
   height: auto;
 }
 
 #catalogo {
   grid-area: catalogo;
+  height: auto;
+  margin-bottom: 20px;
+}
+
+#revistas {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 20px;
   flex-wrap: wrap;
-  height: auto;
-  margin-bottom: 20px;
 }
 
 header {

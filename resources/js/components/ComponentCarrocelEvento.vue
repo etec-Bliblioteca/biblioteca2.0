@@ -34,7 +34,7 @@ export default {
     // puxar os eventos por aqui
     quantidadeEventos: {
       type: Number,
-      default: 4,
+      default: 10,
     },
   },
   data() {

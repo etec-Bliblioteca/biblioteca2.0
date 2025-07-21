@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Revista;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -11,12 +12,25 @@ class CatalogoController
     /**
      * Display a listing of the resource.
      */
+
+    //USUARIO ATUAL
+    private $userData;
     public function index()
     {
+        //PEGAR USUARIO LOGADO
+        $user = Auth::user();
+        if($user){
+            $this->userData = ['id'=>$user->id,'rm'=>$user->rm,"name"=>$user->name];
+        }else{
+            $this->userData = ['id'=>null];
+        }
+
         //PEGAR AS REVISTAS
         $collectionRevistas = Revista::select('id', 'imagem')->limit(10)->get();
         // dd($collectionRevistas->toArray());
-        return Inertia::render('Catalogo', ['collectionRevista' => $collectionRevistas->toArray()]);
+
+
+        return Inertia::render('Catalogo', ['collectionRevista' => $collectionRevistas->toArray(),"User"=>$this->userData]);
     }
 
     /**

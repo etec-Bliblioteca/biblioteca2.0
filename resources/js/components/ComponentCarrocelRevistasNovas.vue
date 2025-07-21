@@ -105,7 +105,7 @@ export default {
 #container .item.active {
     width: 100px !important;
     height: 160px !important;
-    animation: scale-in-center 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+    /* animation: scale-in-center 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) both; */
 }
 
 .slide {

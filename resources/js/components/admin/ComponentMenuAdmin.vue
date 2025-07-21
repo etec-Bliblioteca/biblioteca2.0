@@ -90,13 +90,15 @@ const menuExpand = () =>{
 </template>
 
 <style scoped>
-    .menuBackground{
-        width: 220px;
-        height: calc(100% - 10px);
-        background: var(--cor2);
-        border-radius: 10px;
-        padding: 0px 10px;
-        grid-area: "Menu";
+    .menuBackground {
+    grid-area: Menu;
+    position: sticky;
+    top: 10px;
+    height: calc(100vh - 20px); /* considera o padding do container */
+    background: var(--cor3);
+    border-radius: 10px;
+    padding: 0px 10px;
+    z-index: 10;
     }
 
     .menuIcon{
@@ -171,7 +173,7 @@ const menuExpand = () =>{
     }
 
     .active{
-        background: var(--cor1) !important;
+        background: var(--cor2) !important;
     }
 
     .active > svg path{

@@ -1,5 +1,5 @@
 <script>
-import { useForm } from "@inertiajs/vue3";
+import { Link, useForm } from "@inertiajs/vue3";
 import Swal from "sweetalert2";
 export default {
     name: "Login",
@@ -10,7 +10,11 @@ export default {
                 password: "",
             },
             msg: '',
+            submit: false,
         };
+    },
+    components:{
+        Link
     },
     props: {
         errorMsg: String,
@@ -23,28 +27,20 @@ export default {
                     password: this.formData.password,
                 });
                 form.post("/login");
+                this.submit = true;
             }
         },
     },
-    watch: {
-        errorMsg(value) {
-            Swal.fire({
-                title: "Error",
-                text: value,
-                icon: "error",
-            });
-        },
-    },
-    beforeMount() {
-      if(this.errorMsg){
+    beforeUpdate(){
+        if(this.submit){
         Swal.fire({
             title: "Error",
-            text: this.msg,
+            text: this.errorMsg,
             icon: "error",
         });
-        this.msg = "";
+        this.submit = false;
       }
-    },
+    }
 };
 </script>
 
@@ -117,9 +113,9 @@ export default {
             </button>
 
             <div class="form-footer">
-                <a class="login-link" href="#">
+                <Link class="login-link" href="/register">
                     Não tem conta? <span>Cadastre-se</span>
-                </a>
+                </Link>
             </div>
         </div>
     </div>

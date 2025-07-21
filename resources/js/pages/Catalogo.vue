@@ -58,51 +58,74 @@ export default {
       this.dadosPopUp.tituloPopUp = this.dadosRevista.tituloPopUp;
       this.dadosPopUp.id;
     },
+    components: {
+      Menu,
+      btnMenu,
+      imgPerfil,
+      cpRevista,
+      barraPesquisa,
+      popUp,
+    },
+    props: {
+      desativar: Boolean,
+      collectionRevista: Array,
+      dadosRevista: Object,
+      User: Object,
+    },
+    methods: {
+      infoPopUp() {
+        this.dadosPopUp.imgPopUp = this.dadosRevista.imgPopUp;
+        this.dadosPopUp.descricaoPopUp = this.dadosRevista.descricaoPopUp;
+        this.dadosPopUp.temaPopUp = this.dadosRevista.temaPopUp;
+        this.dadosPopUp.quantPopUp = this.dadosRevista.quantPopUp;
+        this.dadosPopUp.tituloPopUp = this.dadosRevista.tituloPopUp;
+      },
 
-    // função que muda o estado do pop up
-    estadoPopUp(idRevista) {
-      const form = useForm({
-        idRevista: idRevista,
-      });
+      // função que muda o estado do pop up
+      estadoPopUp(idRevista) {
+        const form = useForm({
+          idRevista: idRevista,
+        });
 
-      //   envia o id da revista para o backend através de um post e coloca as informações no pop up antes dele ativar
-      form.post("/catalogo/revista", {
-        onSuccess: () => {
-          this.infoPopUp();
-          this.showPopUp = !this.showPopUp;
-        },
+        //   envia o id da revista para o backend através de um post e coloca as informações no pop up antes dele ativar
+        form.post("/catalogo/revista", {
+          onSuccess: () => {
+            this.infoPopUp();
+            this.showPopUp = !this.showPopUp;
+          },
+        });
+      },
+      // função que ativa o menu
+      clickMenu(active) {
+        this.menuActive = active;
+      },
+      // função que apaga o catalogo e mostra a prévia da pesquisa
+      apagarCatalogo(dados) {
+        this.showCatalogo = !dados;
+      },
+      // função que recebe as revistas da pesquisa e as coloca na prévia
+      gerenciarPesquisa(revistas) {
+        revistas.map((revista) => {
+          this.prevRevistas.push(revista);
+        });
+      },
+      mostrarErro(erro) {
+        this.prevRevistas = [];
+        this.msgErroPesquisa = erro;
+      },
+      semPesquisa() {
+        this.prevRevistas = [];
+      },
+    },
+    beforeMount() {
+      // console.log(novaRevista);
+      // this.criarrevistas();
+      // PREPARA AS REVISTAS
+      this.collectionRevistas.map((revista) => {
+        // console.log(revista.id,revista.imagem);
+        this.revistas.push(revista);
       });
     },
-    // função que ativa o menu
-    clickMenu(active) {
-      this.menuActive = active;
-    },
-    // função que apaga o catalogo e mostra a prévia da pesquisa
-    apagarCatalogo(dados) {
-      this.showCatalogo = !dados;
-    },
-    // função que recebe as revistas da pesquisa e as coloca na prévia
-    gerenciarPesquisa(revistas) {
-      revistas.map((revista) => {
-        this.prevRevistas.push(revista);
-      });
-    },
-    mostrarErro(erro) {
-      this.prevRevistas = [];
-      this.msgErroPesquisa = erro;
-    },
-    semPesquisa() {
-      this.prevRevistas = [];
-    },
-  },
-  beforeMount() {
-    // console.log(novaRevista);
-    // this.criarrevistas();
-    // PREPARA AS REVISTAS
-    this.collectionRevistas.map((revista) => {
-      // console.log(revista.id,revista.imagem);
-      this.revistas.push(revista);
-    });
   },
 };
 </script>
@@ -140,8 +163,12 @@ export default {
     </header>
     <!-- prévia da pesquisa em tempo real -->
     <div id="prevPesquisa">
-      <prevPesquisa v-if="!showCatalogo" :prevRevistas="prevRevistas" :msgErro="msgErroPesquisa"
-      @click-revista="clickCpRevista"/>
+      <prevPesquisa
+        v-if="!showCatalogo"
+        :prevRevistas="prevRevistas"
+        :msgErro="msgErroPesquisa"
+        @click-revista="clickCpRevista"
+      />
     </div>
     <!-- Catalogo -->
     <div id="catalogo" v-if="showCatalogo">

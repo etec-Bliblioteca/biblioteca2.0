@@ -7,17 +7,14 @@ import imgPerfil from "../components/ComponentImgPerfil.vue";
 import btnMenu from "../components/ComponentBtnMenu.vue";
 import Menu from "../components/ComponentMenu.vue";
 export default {
-    name: "inicio",
+    name: "Perfil",
     data() {
         return {
             menuActive: false,
-            // Pega esses titulos e joga em um props depois
-            titulo1: "Eventos",
-            titulo2: "Revistas Novas",
         };
     },
     props: {
-        User: Object,
+        User:Object,
     },
     components: {
         Menu,
@@ -39,48 +36,33 @@ export default {
     <div id="pg-inicio">
         <!-- topo da página -->
         <header>
-            <Menu :active="menuActive" page="0" :user="User"/>
+            <Menu :active="menuActive" page="4" :user="User"/>
             <!-- botão de menu -->
             <btnMenu @clickMenu="clickMenu"></btnMenu>
-            <!-- Icone de Perfil -->
-            <img-perfil></img-perfil>
         </header>
-        <!-- Corrocel de eventos -->
-        <section id="carrocelEventosLugar">
-            <subtitulosPrincipais :nomeTitulo="titulo1"></subtitulosPrincipais>
-            <carrocelEventos></carrocelEventos>
-        </section>
-        <!-- revistas novas -->
-        <section id="carrocelRevistasNovasLugar">
-            <subtitulosPrincipais :nomeTitulo="titulo2"></subtitulosPrincipais>
-            <carrocelRevistasNovas></carrocelRevistasNovas>
-        </section>
-        <!-- botões para navegar entre as páginas -->
-        <div id="caixaBotões">
-            <btnMudarPg></btnMudarPg>
-            <btnMudarPg></btnMudarPg>
-            <btnMudarPg></btnMudarPg>
-        </div>
+
     </div>
 </template>
 
 <style scoped>
-    body,html,#app{
-        color: black;
-        width: 100%;
-        height: 100%;
-        background-color: var(--corFundoPrincipal);
-    }
+body,
+html,
+#app {
+    color: black;
+    width: 100%;
+    height: 100%;
+    background-color: var(--corFundoPrincipal);
+}
 
-    #app{
-        display: grid;
-        grid-template-areas:
-        'header'
-        'eventos'
-        'revistasNovas'
-        'botões';
-        grid-template-rows: auto 1fr 1.6fr 0.25fr;
-    }
+#app {
+    display: grid;
+    grid-template-areas:
+        "header"
+        "eventos"
+        "revistasNovas"
+        "botões";
+    grid-template-rows: auto 1fr 1.6fr 0.25fr;
+}
 
 #caixaBotões {
     display: flex;

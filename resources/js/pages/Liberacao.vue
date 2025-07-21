@@ -21,7 +21,7 @@ export default {
         btnCheck(userRm) {
             const form = useForm({
                 rm: userRm,
-                action: 'lib'
+                action: "lib",
             });
 
             form.submit("post", "/admin/liberacao");
@@ -29,11 +29,22 @@ export default {
         btnRecuse(userRm) {
             const form = useForm({
                 rm: userRm,
-                action: 'rec'
+                action: "rec",
             });
 
             form.submit("post", "/admin/liberacao");
         },
+    },
+    mounted() {
+        window.Echo.channel(`newUser`).listen(".addNewUser", (e) => {
+            this.UsersInativos.push(e.newUser);
+            if (Notification.permission === "granted") {
+                new Notification("Novo aluno cadastrado", {
+                    body: "Acesse a página de liberação para aprova-lo",
+                    tag:'newAluno'
+                });
+            }
+        });
     },
 };
 </script>

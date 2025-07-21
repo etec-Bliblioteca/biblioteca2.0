@@ -1,12 +1,13 @@
 <script>
-import { Link, useForm } from "@inertiajs/vue3";
+import { useForm, usePage } from "@inertiajs/vue3";
 import Swal from "sweetalert2";
 
 export default {
-    name: "Register",
+    name: "FormUser",
     data() {
         return {
             formData: {
+                id: null,
                 nome: "",
                 rm: null,
                 telefone: "",
@@ -14,6 +15,7 @@ export default {
                 turma: "",
                 periodo: "",
                 email: "",
+                nivel: null,
                 senha: "",
             },
             showPassword: false,
@@ -25,15 +27,132 @@ export default {
             },
         };
     },
-    components: {
-        Link,
-    },
+    emits: ["toggleForm"],
     props: {
-        errorMsg: String,
+        showForm: Boolean,
+        UserEdit: Object,
     },
     methods: {
-        togglePassword() {
-            this.showPassword = !this.showPassword;
+        btnSave() {
+            const obrigatorios = [
+                "rm",
+                "nivel",
+                "state",
+                "email",
+                "password",
+                "telefone",
+                "turma",
+            ];
+
+            const camposValidos = obrigatorios.every(
+                (campo) =>
+                    this.formData[campo] !== null && this.formData[campo] !== ""
+            );
+
+            if (!camposValidos) {
+                Swal.fire({
+                    title: "Campos obrigatórios!",
+                    text: "Preencha todos os campos antes de continuar.",
+                    icon: "warning",
+                    confirmButtonColor: "var(--cor1)",
+                    confirmButtonText: "OK",
+                });
+                return;
+            } else {
+                if (this.formData.id == null) {
+                    let nivelNum =
+                        this.formData.nivel == "Administrador" ? 1 : 0;
+                    let turma = `${this.formData.ano} ${this.formData.turma} ${this.formData.periodo}`;
+                    const form = useForm({
+                        nome: this.formData.nome,
+                        rm: this.formData.rm,
+                        nivel: nivelNum,
+                        turma: turma,
+                        telefone: this.formData.telefone,
+                        email: this.formData.email,
+                    });
+                    form.submit("put", "/admin/users", {
+                        onSuccess: () => {
+                            const flash = usePage();
+                            if (flash.props.flash.msg) {
+                                Swal.fire({
+                                    title: flash.props.flash.msg.title,
+                                    text: flash.props.flash.msg.text,
+                                    icon: flash.props.flash.msg.icon,
+                                    confirmButtonColor: "var(--cor1)",
+                                    confirmButtonText: "OK",
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        this.toggleForm();
+                                    }
+                                });
+                            }
+                        },
+                        onError: () => {
+                            Swal.fire({
+                                title: "Algo deu Errado!",
+                                text: "Algo não saiu como esperado",
+                                icon: "error",
+                                confirmButtonColor: "var(--cor1)",
+                                confirmButtonText: "OK",
+                            });
+                        },
+                    });
+                } else {
+                    let nivelNum =
+                        this.formData.nivel == "Administrador" ? 1 : 0;
+                    let turma = `${this.formData.ano} ${this.formData.turma} ${this.formData.periodo}`;
+                    const form = useForm({
+                        id: this.formData.id,
+                        nome: this.formData.nome,
+                        rm: this.formData.rm,
+                        nivel: nivelNum,
+                        turma: turma,
+                        telefone: this.formData.telefone,
+                        email: this.formData.email,
+                    });
+                    form.submit("post", "/admin/users/edit", {
+                        onSuccess: () => {
+                            const flash = usePage();
+                            if (flash.props.flash.msg) {
+                                Swal.fire({
+                                    title: flash.props.flash.msg.title,
+                                    text: flash.props.flash.msg.text,
+                                    icon: flash.props.flash.msg.icon,
+                                    confirmButtonColor: "var(--cor1)",
+                                    confirmButtonText: "OK",
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        this.toggleForm();
+                                    }
+                                });
+                            }
+                        },
+                        onError: () => {
+                            Swal.fire({
+                                title: "Algo deu Errado!",
+                                text: "Algo não saiu como esperado",
+                                icon: "error",
+                                confirmButtonColor: "var(--cor1)",
+                                confirmButtonText: "OK",
+                            });
+                        },
+                    });
+                }
+            }
+        },
+        resetForm() {
+            // RESETAR FORMULARIO
+            this.formData.id = null;
+            this.formData.nome = "";
+            this.formData.rm = "";
+            this.formData.telefone = "";
+            this.formData.ano = "";
+            this.formData.turma = "";
+            this.formData.periodo = "";
+            this.formData.nivel = null;
+            this.formData.email = null;
+            this.closeDropdowns();
         },
         toggleDropdown(dropdown) {
             // Fecha todos os outros dropdowns
@@ -54,66 +173,76 @@ export default {
                 this.dropdowns[key] = false;
             });
         },
-        // ENVIAR FORMULARIO DE REGISTRO
-        register() {
-            if (
-                this.formData.nome &&
-                this.formData.rm &&
-                this.formData.telefone &&
-                this.formData.email &&
-                this.formData.senha
-            ) {
-                const form = useForm({
-                    nome: this.formData.nome,
-                    rm: this.formData.rm,
-                    telefone: this.formData.telefone,
-                    ano: this.formData.ano,
-                    turma: this.formData.turma,
-                    periodo: this.formData.periodo,
-                    email: this.formData.email,
-                    senha: this.formData.senha,
-                });
-                form.post("/register");
-                this.submit = true;
+        toggleForm() {
+            this.resetForm();
+            this.$emit("toggleForm");
+        },
+        togglePassword() {
+            this.showPassword = !this.showPassword;
+        },
+    },
+    watch: {
+        // ATIVA QUANDO O PROPS MUDAR DE VALOR
+        UserEdit(user) {
+            // PREENCHE OS DADOS ESCOLHIDOS
+            this.formData.id = user.id;
+            this.formData.nome = user.name;
+            this.formData.rm = user.rm;
+            if (user.nivel == 0) {
+                this.formData.nivel = "Aluno";
             } else {
-                Swal.fire({
-                    title: "Erro",
-                    text: "Por favor, preencha todos os campos obrigatórios",
-                    icon: "error",
-                });
+                this.formData.nivel = "Administrador";
             }
+            this.formData.telefone = user.telefone;
+            this.formData.email = user.email;
+            let turmaSeparada = user.turma.split(" ");
+            this.formData.ano = turmaSeparada[0];
+            this.formData.turma = turmaSeparada[1];
+            this.formData.periodo = turmaSeparada[2];
+        },
+        Msg(newMsg) {
+            console.log(newMsg);
         },
     },
     mounted() {
-        // Fechar dropdowns ao clicar fora
-        document.addEventListener("click", (e) => {
-            if (!e.target.closest(".custom-select-wrapper")) {
-                this.closeDropdowns();
+        document.addEventListener("keydown", (key) => {
+            if (key.key == "Escape" && this.showForm == true) {
+                this.resetForm();
+                this.$emit("toggleForm");
             }
         });
-    },
-    beforeUpdate() {
-        if (this.submit && this.errorMsg) {
-            Swal.fire({
-                title: "Error",
-                text: this.errorMsg,
-                icon: "error",
-            });
-            this.submit = false;
-        }
     },
 };
 </script>
 
 <template>
-    <div class="backgorund">
+    <div class="background" v-show="showForm">
         <div class="modern-form">
-            <div class="form-title">Registrar-SE</div>
+            <button id="btnClose" @click="toggleForm()">
+                <svg
+                    viewBox="0 0 1024 1024"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="#000000"
+                >
+                    <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                    <g
+                        id="SVGRepo_tracerCarrier"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    ></g>
+                    <g id="SVGRepo_iconCarrier">
+                        <path
+                            fill="#000000"
+                            d="M195.2 195.2a64 64 0 0 1 90.496 0L512 421.504 738.304 195.2a64 64 0 0 1 90.496 90.496L602.496 512 828.8 738.304a64 64 0 0 1-90.496 90.496L512 602.496 285.696 828.8a64 64 0 0 1-90.496-90.496L421.504 512 195.2 285.696a64 64 0 0 1 0-90.496z"
+                        ></path>
+                    </g>
+                </svg>
+            </button>
+
             <div class="form-body">
                 <!-- Nome e RM -->
                 <label class="select-label">Dados Escolar:</label>
                 <div class="form-row">
-              
                     <div class="input-group">
                         <div class="input-wrapper">
                             <svg
@@ -160,6 +289,7 @@ export default {
                         </div>
                     </div>
                 </div>
+
                 <!-- Telefone -->
                 <div class="input-group">
                     <div class="input-wrapper">
@@ -181,6 +311,53 @@ export default {
                         />
                     </div>
                 </div>
+
+                <!-- Nivel -->
+                <div class="input-group">
+                    <label class="select-label">Nivel:</label>
+                    <div class="select-row">
+                        <div class="custom-select-wrapper">
+                            <div
+                                class="custom-select"
+                                @click="toggleDropdown('nivel')"
+                                :class="{ active: dropdowns.nivel }"
+                            >
+                                <span class="selected-value">{{
+                                    formData.nivel
+                                }}</span>
+                                <svg
+                                    class="dropdown-arrow"
+                                    :class="{ rotated: dropdowns.nivel }"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <path
+                                        stroke-width="1.5"
+                                        stroke="currentColor"
+                                        d="M19.5 8.25L12 15.75L4.5 8.25"
+                                    ></path>
+                                </svg>
+                            </div>
+                            <div class="dropdown-list" v-show="dropdowns.nivel">
+                                <div
+                                    class="dropdown-item"
+                                    @click="
+                                        selectOption('nivel', 'Administrador')
+                                    "
+                                >
+                                    Administrador
+                                </div>
+                                <div
+                                    class="dropdown-item"
+                                    @click="selectOption('nivel', 'Aluno')"
+                                >
+                                    Aluno
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Turma -->
                 <div class="input-group">
                     <label class="select-label">Turma:</label>
@@ -312,7 +489,7 @@ export default {
                 </div>
                 <!-- Email -->
                 <div class="input-group">
-                    <label class="select-label">Email e Senha:</label>
+                    <label class="select-label">Email:</label>
                     <div class="input-wrapper">
                         <svg fill="none" viewBox="0 0 24 24" class="input-icon">
                             <path
@@ -330,90 +507,40 @@ export default {
                         />
                     </div>
                 </div>
-                <!-- Senha -->
-                <div class="input-group">
-                    <div class="input-wrapper">
-                        <svg fill="none" viewBox="0 0 24 24" class="input-icon">
-                            <path
-                                stroke-width="1.5"
-                                stroke="currentColor"
-                                d="M12 10V14M8 6H16C17.1046 6 18 6.89543 18 8V16C18 17.1046 17.1046 18 16 18H8C6.89543 18 6 17.1046 6 16V8C6 6.89543 6.89543 6 8 6Z"
-                            ></path>
-                        </svg>
-                        <input
-                            required
-                            placeholder="Senha"
-                            class="form-input"
-                            :type="showPassword ? 'text' : 'password'"
-                            v-model="formData.senha"
-                        />
-                        <button
-                            class="password-toggle"
-                            type="button"
-                            @click="togglePassword"
-                        >
-                            <svg
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                class="eye-icon"
-                                v-if="!showPassword"
-                            >
-                                <path
-                                    stroke-width="1.5"
-                                    stroke="currentColor"
-                                    d="M2 12C2 12 5 5 12 5C19 5 22 12 22 12C22 12 19 19 12 19C5 19 2 12 2 12Z"
-                                ></path>
-                                <circle
-                                    stroke-width="1.5"
-                                    stroke="currentColor"
-                                    r="3"
-                                    cy="12"
-                                    cx="12"
-                                ></circle>
-                            </svg>
-                            <svg
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                class="eye-icon"
-                                v-else
-                            >
-                                <path
-                                    stroke-width="1.5"
-                                    stroke="currentColor"
-                                    d="M2.99902 3L20.999 21M9.8433 9.91364C9.32066 10.4536 8.99902 11.1892 8.99902 12C8.99902 13.6569 10.3422 15 11.999 15C12.8215 15 13.5667 14.669 14.1086 14.133M6.49902 6.64715C4.59972 7.90034 3.15305 9.78394 2.45703 12C3.73128 16.0571 7.52159 19 11.9992 19C13.9881 19 15.8414 18.4194 17.3988 17.4184M10.999 5.04939C11.328 5.01673 11.6617 5 11.9992 5C16.4769 5 20.2672 7.94291 21.5414 12C21.2607 12.894 20.8577 13.7338 20.3522 14.5"
-                                ></path>
-                            </svg>
-                        </button>
-                    </div>
-                </div>
             </div>
 
-            <button class="submit-button" type="submit" @click="register()">
-                <span class="button-text">Registrar</span>
-                <div class="button-glow"></div>
-            </button>
+            <div class="button-group">
+                <button class="submit-button" @click="btnSave()">
+                    <span class="button-text">Salvar</span>
+                    <div class="button-glow"></div>
+                </button>
 
-            <div class="form-footer">
-                <Link class="login-link" href="/login">
-                    Já tem uma conta? <span>Entrar</span>
-                </Link>
+                <button
+                    class="submit-button cancel-button"
+                    @click="toggleForm()"
+                >
+                    <span class="button-text">Cancelar</span>
+                </button>
             </div>
         </div>
     </div>
 </template>
 
 <style scoped>
-.backgorund {
-    width: 100%;
-    height: 100%;
+.background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: var(--cor3);
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    background: rgba(0, 0, 0, 0.281);
+    border-radius: 10px;
+    backdrop-filter: blur(5px);
+    z-index: 100;
+    overflow: auto;
 }
 
 .modern-form {
@@ -424,16 +551,44 @@ export default {
     --text-main: #1e293b;
     --text-secondary: #64748b;
     --bg-input: var(--cor3);
-
-    position: relative;
-    width: 420px;
-    padding: 32px;
+    overflow-y: scroll;
+    width: 500px;
+    height: fit-content;
+    padding: 40px;
     background: #ffffff;
-    border-radius: 16px;
+    border-radius: 10px;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
         0 2px 4px -2px rgba(0, 0, 0, 0.05),
         inset 0 0 0 1px rgba(148, 163, 184, 0.1);
     font-family: system-ui, -apple-system, sans-serif;
+    position: absolute;
+    animation: scale-up-center 0.1s cubic-bezier(0.39, 0.575, 0.565, 1) both;
+    z-index: 1000;
+}
+
+@keyframes scale-up-center {
+    0% {
+        -webkit-transform: scale(0.5);
+        transform: scale(0.5);
+    }
+    100% {
+        -webkit-transform: scale(1);
+        transform: scale(1);
+    }
+}
+
+.modern-form::-webkit-scrollbar {
+    display: none;
+}
+
+#btnClose {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    border-radius: 10px;
+    top: 20px;
+    right: 20px;
+    background: none;
 }
 
 .form-title {
@@ -464,6 +619,38 @@ export default {
     position: relative;
     display: flex;
     align-items: center;
+}
+.input-wrapper.no-icon {
+    padding-left: 0; /* remove espaço do ícone */
+}
+
+.textarea-style {
+    resize: vertical;
+    min-height: 100px;
+    padding: 10px 16px !important;
+    line-height: 1.5;
+    font-size: 14px;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    background: var(--bg-input);
+    color: var(--text-main);
+    transition: all 0.2s ease;
+    font-family: system-ui, sans-serif;
+}
+
+.textarea-style::placeholder {
+    color: var(--text-secondary);
+}
+
+.textarea-style:hover {
+    border-color: #cbd5e1;
+}
+
+.textarea-style:focus {
+    outline: none;
+    border-color: var(--primary);
+    background: white;
+    box-shadow: 0 0 0 4px var(--primary-light);
 }
 
 .form-input {
@@ -712,72 +899,93 @@ export default {
     transform: translateX(100%);
 }
 
-.login-link:hover {
-    color: var(--text-main);
+.button-group {
+    display: flex;
+    gap: 12px;
+    margin-top: 16px;
 }
 
-.login-link:hover span {
-    color: var(--primary-dark);
-}
-
-/* Active States */
-.submit-button:active {
-    transform: translateY(0);
+.cancel-button {
+    background: white;
+    color: var(--primary);
+    border: 1px solid var(--primary);
     box-shadow: none;
+    position: relative;
+    overflow: hidden;
 }
 
-.password-toggle:active {
-    transform: scale(0.9);
+.cancel-button:hover {
+    background: var(--primary-light);
+    color: var(--primary-dark);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
 }
 
-/* Validation States */
-.form-input:not(:placeholder-shown):valid {
-    border-color: var(--success);
+.cancel-button .button-glow {
+    display: none;
 }
 
-.form-input:not(:placeholder-shown):valid ~ .input-icon {
-    color: var(--success);
+.upload-group {
+    flex: 0 !important;
+    gap: 10px !important;
 }
 
-/* Animation */
-@keyframes shake {
-    0%,
-    100% {
-        transform: translateX(0);
-    }
-    25% {
-        transform: translateX(-4px);
-    }
-    75% {
-        transform: translateX(4px);
-    }
+.upload-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
 }
 
-.form-input:not(:placeholder-shown):invalid {
-    border-color: #ef4444;
-    animation: shake 0.2s ease-in-out;
+.upload-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    background: var(--bg-input);
+    border: 1px dashed #94a3b8;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s ease;
 }
 
-.form-input:not(:placeholder-shown):invalid ~ .input-icon {
-    color: #ef4444;
+.upload-label:hover {
+    background-color: #f1f5f9;
+    border-color: #2563eb;
 }
 
-@media (max-width: 480px) {
-    .modern-form {
-        top: 20px;
-        width: 300px;
-        padding: 24px;
-        margin-top: 50px;
-    }
+.upload-input {
+    display: none;
+}
 
-    .form-row {
-        flex-direction: column;
-        gap: 16px;
-    }
+.upload-icon {
+    width: 20px;
+    height: 20px;
+    color: #2563eb;
+}
 
-    .select-row {
-        flex-direction: column;
-        gap: 12px;
-    }
+.upload-text {
+    font-size: 14px;
+    font-weight: 500;
+    color: #1e293b;
+}
+
+.preview-wrapper {
+    width: 100px;
+    height: 140px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    background-color: #f9fafb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.capa-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 </style>

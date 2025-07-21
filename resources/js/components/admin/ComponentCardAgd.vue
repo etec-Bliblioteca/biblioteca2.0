@@ -1,33 +1,133 @@
 <script>
+import { useForm, usePage } from "@inertiajs/vue3";
+import Swal from "sweetalert2";
+
 export default {
     name: "CardAgd",
+    data() {
+        return {
+            dataFormatada: "",
+        };
+    },
+    props: {
+        id: Number,
+        NomeAluno: String,
+        RM: Number,
+        Turma: String,
+        Dt_Devolver: String,
+        Revista: String,
+        Imagem: String,
+        telefone: Number,
+    },
+    methods: {
+        btnCheck() {
+            const form = useForm({
+                id: this.id,
+            });
+
+            form.submit("delete", "/admin/home/agdCheck", {
+                onSuccess: () => {
+                    const flash = usePage();
+                    Swal.fire({
+                        title: flash.props.flash.msg.title,
+                        text: flash.props.flash.msg.text,
+                        icon: flash.props.flash.msg.icon,
+                        confirmButtonColor: "var(--cor1)",
+                        confirmButtonText: "OK",
+                    });
+                },
+            });
+        },
+        btnCall() {
+            let text =
+                `📢 Atenção *${this.NomeAluno}*!\n\n` +
+                `Seu agendamento para a revista *${this.Revista}* expirou.\n` +
+                `Pedimos que devolva a revista para evitar problemas.` +
+                `Qualquer dúvida, estamos à disposição.\n\n` +
+                `📚 *Biblioteca da Etec de Francisco Morato*`;
+
+            let textEncode = encodeURIComponent(text);
+            const url = `https://wa.me/55${this.telefone}?text=${textEncode}`;
+
+            console.log(url, textEncode);
+            window.open(url, "_blank");
+        },
+        btnAdd() {
+            const form = useForm({
+                id: this.id,
+            });
+
+            form.submit("post", "/admin/home/adiar", {
+                onSuccess: () => {
+                    const flash = usePage();
+                    Swal.fire({
+                        title: flash.props.flash.msg.title,
+                        text: flash.props.flash.msg.text,
+                        icon: flash.props.flash.msg.icon,
+                        confirmButtonColor: "var(--cor1)",
+                        confirmButtonText: "OK",
+                    });
+                },
+            });
+        },
+    },
+    beforeMount() {
+        let date = new Date(this.Dt_Devolver);
+        let dia = String(date.getDate()).padStart(2, "0");
+        let mes = String(date.getMonth() + 1).padStart(2, "0");
+        let ano = date.getFullYear();
+        this.dataFormatada = `${dia}/${mes}/${ano}`;
+    },
 };
 </script>
 
 <template>
     <div class="card">
-        <img :src="'../storage/images/semImagem.jpg'" />
+        <img :src="`../storage/images/${Imagem}`" />
         <div class="cardContent">
             <div class="cardInfo">
-                <h1>Nome do aluno</h1>
+                <h1>{{ NomeAluno }}</h1>
                 <div class="cardData">
-                    <div class="dataTitle">RM</div>
-                    <span class="dataText">25036</span>
+                    <div class="dataTitle">Revista</div>
+                    <span class="dataText">{{ Revista }}</span>
                 </div>
                 <div class="cardData">
-                    <div class="dataTitle">turma</div>
-                    <span class="dataText">1º Info Manhã</span>
+                    <div class="dataTitle">RM</div>
+                    <span class="dataText">{{ RM }}</span>
+                </div>
+                <div class="cardData">
+                    <div class="dataTitle">Turma</div>
+                    <span class="dataText">{{ Turma }}</span>
                 </div>
                 <div class="cardData">
                     <div class="dataTitle">Devolver</div>
-                    <span class="dataText">00/00/00</span>
+                    <span class="dataText">{{ dataFormatada }}</span>
                 </div>
             </div>
             <div class="cardButtons">
-                <button id="btnCheck">
-                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path fill-rule="evenodd" clip-rule="evenodd" d="M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12ZM16.0303 8.96967C16.3232 9.26256 16.3232 9.73744 16.0303 10.0303L11.0303 15.0303C10.7374 15.3232 10.2626 15.3232 9.96967 15.0303L7.96967 13.0303C7.67678 12.7374 7.67678 12.2626 7.96967 11.9697C8.26256 11.6768 8.73744 11.6768 9.03033 11.9697L10.5 13.4393L12.7348 11.2045L14.9697 8.96967C15.2626 8.67678 15.7374 8.67678 16.0303 8.96967Z" fill="#1C274C"></path> </g></svg>
+                <button id="btnCheck" @click="btnCheck">
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                    >
+                        <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                        <g
+                            id="SVGRepo_tracerCarrier"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        ></g>
+                        <g id="SVGRepo_iconCarrier">
+                            <path
+                                fill-rule="evenodd"
+                                clip-rule="evenodd"
+                                d="M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12ZM16.0303 8.96967C16.3232 9.26256 16.3232 9.73744 16.0303 10.0303L11.0303 15.0303C10.7374 15.3232 10.2626 15.3232 9.96967 15.0303L7.96967 13.0303C7.67678 12.7374 7.67678 12.2626 7.96967 11.9697C8.26256 11.6768 8.73744 11.6768 9.03033 11.9697L10.5 13.4393L12.7348 11.2045L14.9697 8.96967C15.2626 8.67678 15.7374 8.67678 16.0303 8.96967Z"
+                                fill="#1C274C"
+                            ></path>
+                        </g>
+                    </svg>
                 </button>
-                <button id="btnAdd">
+                <button id="btnAdd" @click="btnAdd">
                     <svg
                         viewBox="0 0 24 24"
                         fill="none"
@@ -53,10 +153,28 @@ export default {
                         </g>
                     </svg>
                 </button>
-                <button id="btnCall">
-                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M21.97 18.33C21.97 18.69 21.89 19.06 21.72 19.42C21.55 19.78 21.33 20.12 21.04 20.44C20.55 20.98 20.01 21.37 19.4 21.62C18.8 21.87 18.15 22 17.45 22C16.43 22 15.34 21.76 14.19 21.27C13.04 20.78 11.89 20.12 10.75 19.29C9.6 18.45 8.51 17.52 7.47 16.49C6.44 15.45 5.51 14.36 4.68 13.22C3.86 12.08 3.2 10.94 2.72 9.81C2.24 8.67 2 7.58 2 6.54C2 5.86 2.12 5.21 2.36 4.61C2.6 4 2.98 3.44 3.51 2.94C4.15 2.31 4.85 2 5.59 2C5.87 2 6.15 2.06 6.4 2.18C6.66 2.3 6.89 2.48 7.07 2.74L9.39 6.01C9.57 6.26 9.7 6.49 9.79 6.71C9.88 6.92 9.93 7.13 9.93 7.32C9.93 7.56 9.86 7.8 9.72 8.03C9.59 8.26 9.4 8.5 9.16 8.74L8.4 9.53C8.29 9.64 8.24 9.77 8.24 9.93C8.24 10.01 8.25 10.08 8.27 10.16C8.3 10.24 8.33 10.3 8.35 10.36C8.53 10.69 8.84 11.12 9.28 11.64C9.73 12.16 10.21 12.69 10.73 13.22C11.27 13.75 11.79 14.24 12.32 14.69C12.84 15.13 13.27 15.43 13.61 15.61C13.66 15.63 13.72 15.66 13.79 15.69C13.87 15.72 13.95 15.73 14.04 15.73C14.21 15.73 14.34 15.67 14.45 15.56L15.21 14.81C15.46 14.56 15.7 14.37 15.93 14.25C16.16 14.11 16.39 14.04 16.64 14.04C16.83 14.04 17.03 14.08 17.25 14.17C17.47 14.26 17.7 14.39 17.95 14.56L21.26 16.91C21.52 17.09 21.7 17.3 21.81 17.55C21.91 17.8 21.97 18.05 21.97 18.33Z" stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10"></path> </g></svg>
+                <button id="btnCall" @click="btnCall">
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                    >
+                        <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                        <g
+                            id="SVGRepo_tracerCarrier"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        ></g>
+                        <g id="SVGRepo_iconCarrier">
+                            <path
+                                d="M21.97 18.33C21.97 18.69 21.89 19.06 21.72 19.42C21.55 19.78 21.33 20.12 21.04 20.44C20.55 20.98 20.01 21.37 19.4 21.62C18.8 21.87 18.15 22 17.45 22C16.43 22 15.34 21.76 14.19 21.27C13.04 20.78 11.89 20.12 10.75 19.29C9.6 18.45 8.51 17.52 7.47 16.49C6.44 15.45 5.51 14.36 4.68 13.22C3.86 12.08 3.2 10.94 2.72 9.81C2.24 8.67 2 7.58 2 6.54C2 5.86 2.12 5.21 2.36 4.61C2.6 4 2.98 3.44 3.51 2.94C4.15 2.31 4.85 2 5.59 2C5.87 2 6.15 2.06 6.4 2.18C6.66 2.3 6.89 2.48 7.07 2.74L9.39 6.01C9.57 6.26 9.7 6.49 9.79 6.71C9.88 6.92 9.93 7.13 9.93 7.32C9.93 7.56 9.86 7.8 9.72 8.03C9.59 8.26 9.4 8.5 9.16 8.74L8.4 9.53C8.29 9.64 8.24 9.77 8.24 9.93C8.24 10.01 8.25 10.08 8.27 10.16C8.3 10.24 8.33 10.3 8.35 10.36C8.53 10.69 8.84 11.12 9.28 11.64C9.73 12.16 10.21 12.69 10.73 13.22C11.27 13.75 11.79 14.24 12.32 14.69C12.84 15.13 13.27 15.43 13.61 15.61C13.66 15.63 13.72 15.66 13.79 15.69C13.87 15.72 13.95 15.73 14.04 15.73C14.21 15.73 14.34 15.67 14.45 15.56L15.21 14.81C15.46 14.56 15.7 14.37 15.93 14.25C16.16 14.11 16.39 14.04 16.64 14.04C16.83 14.04 17.03 14.08 17.25 14.17C17.47 14.26 17.7 14.39 17.95 14.56L21.26 16.91C21.52 17.09 21.7 17.3 21.81 17.55C21.91 17.8 21.97 18.05 21.97 18.33Z"
+                                stroke="#292D32"
+                                stroke-width="1.5"
+                                stroke-miterlimit="10"
+                            ></path>
+                        </g>
+                    </svg>
                 </button>
-                
             </div>
         </div>
     </div>
@@ -64,9 +182,10 @@ export default {
 
 <style scoped>
 .card {
-    min-width: 300px;
+    min-width: 400px;
     /* max-width: 350px; */
-    height: 180px;
+    max-height: fit-content;
+    min-height: 200px;
     width: fit-content;
     border-radius: 5px;
     outline: 2px solid var(--cor1);
@@ -79,9 +198,10 @@ export default {
 }
 
 .card img {
-    width: 30%;
+    width: 150px;
     height: 100%;
     border-radius: 5px;
+    object-fit: cover;
 }
 
 .cardContent {
@@ -167,24 +287,21 @@ export default {
 
 .cardButtons button svg path {
     fill: var(--cor1);
-    stroke: var(--cor1);  
+    stroke: var(--cor1);
 }
 
-#btnCheck{
-    outline-color: #1F7634;
-    background: #58D073;
+#btnCheck {
+    outline-color: #1f7634;
+    background: #58d073;
 }
 
-#btnAdd{
-    outline-color: #BA9E14;
-    background: #EEEE56;
+#btnAdd {
+    outline-color: #ba9e14;
+    background: #eeee56;
 }
 
-#btnCall{
+#btnCall {
     outline-color: #166534;
-    background: #BBF7D0;
+    background: #bbf7d0;
 }
-
-
-
 </style>

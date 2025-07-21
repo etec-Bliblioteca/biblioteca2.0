@@ -11,7 +11,7 @@ export default {
   },
   props: {
     active: Boolean,
-    page: Number,
+    page: String,
     user: Object
   },
   components: {

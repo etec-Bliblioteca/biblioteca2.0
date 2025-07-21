@@ -8,9 +8,6 @@ const props = defineProps(['page']);
 onMounted(()=>{
     const linkItems = [...document.querySelectorAll('.link')];
     linkItems[props.page].classList.add('active');
-    if(props.page == 4 || props.page == 5 || props.page == 6 ){
-        dropdownLink();
-    };
 });
 
 const dropdownLink = () =>{
@@ -26,10 +23,23 @@ const dropdownLink = () =>{
     }
 }
 
-const menuExpand = () =>{
-    const menuBackground = document.getElementById("menuBackground");
-    menuBackground.style.width = "100px";
+const dropdownLinkEdit = () =>{
+    dropdownState = !dropdownState;
+    const dropdownIcon = document.getElementById('dropdownEditIcon');
+    const dropdownContainer = document.getElementById('dropdown-container-edit'); 
+    if(dropdownState){
+        dropdownIcon.style.transform = "rotate(180deg)";
+        dropdownContainer.style.height = "fit-content";
+    }else{
+        dropdownIcon.style.transform = "rotate(360deg)";
+        dropdownContainer.style.height = "0px";
+    }
 }
+
+// const menuExpand = () =>{
+//     const menuBackground = document.getElementById("menuBackground");
+//     menuBackground.style.width = "100px";
+// }
 
 </script>
 
@@ -58,33 +68,60 @@ const menuExpand = () =>{
                     pedidos
                 </span>
             </Link>
-            <div class="link link-dropdown" @click="dropdownLink()">
-                <svg fill="#000000" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"><path d="M12,2A10,10,0,1,0,22,12,10,10,0,0,0,12,2Zm4,11H13v3a1,1,0,0,1-2,0V13H8a1,1,0,0,1,0-2h3V8a1,1,0,0,1,2,0v3h3a1,1,0,0,1,0,2Z"></path></g></svg>
+            <Link class="link" href="/admin/revistas">
+                <svg
+                    class="linkIcon"
+                    viewBox="0 -0.5 20 20"
+                    version="1.1"
+                    xmlns="http://www.w3.org/2000/svg"
+                    xmlns:xlink="http://www.w3.org/1999/xlink"
+                    fill="#000000"
+                >
+                    <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                    <g
+                        id="SVGRepo_tracerCarrier"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    ></g>
+                    <g id="SVGRepo_iconCarrier">
+                        <title>book [#1207]</title>
+                        <desc>Created with Sketch.</desc>
+                        <defs></defs>
+                        <g
+                            id="Page-1"
+                            stroke="none"
+                            stroke-width="1"
+                            fill="none"
+                            fill-rule="evenodd"
+                        >
+                            <g
+                                id="Dribbble-Light-Preview"
+                                transform="translate(-260.000000, -2759.000000)"
+                                fill="#000000"
+                            >
+                                <g
+                                    id="icons"
+                                    transform="translate(56.000000, 160.000000)"
+                                >
+                                    <path
+                                        d="M222,2612.40709 C222,2612.84565 221.729,2613.23594 221.324,2613.3787 L215,2615.60539 L215,2603.71501 L215,2603.53322 L220.676,2601.53454 C221.325,2601.3055 222,2601.80055 222,2602.50615 L222,2612.40709 Z M213,2603.71501 L213,2615.60539 L206.676,2613.3787 C206.271,2613.23594 206,2612.84565 206,2612.40709 L206,2602.50615 C206,2601.80055 206.675,2601.3055 207.324,2601.53454 L213,2603.53322 L213,2603.71501 Z M221.337,2599.11785 L214.331,2601.64444 C214.117,2601.72147 213.883,2601.72147 213.669,2601.64444 L206.663,2599.11785 C205.362,2598.64847 204,2599.6396 204,2601.05592 L204,2613.11577 C204,2613.997 204.547,2614.78065 205.36,2615.06207 L213.68,2617.94608 C213.888,2618.01797 214.112,2618.01797 214.32,2617.94608 L222.64,2615.06207 C223.453,2614.78065 224,2613.997 224,2613.11577 L224,2601.05592 C224,2599.6396 222.638,2598.64847 221.337,2599.11785 L221.337,2599.11785 Z"
+                                        id="book-[#1207]"
+                                    ></path>
+                                </g>
+                            </g>
+                        </g>
+                    </g>
+                </svg>
                 <span class="linkText">
-                    Adicionar
+                    Revistas
                 </span>
-                <svg id="dropdownIcon" style="transition: 0.3s;" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M5.70711 9.71069C5.31658 10.1012 5.31658 10.7344 5.70711 11.1249L10.5993 16.0123C11.3805 16.7927 12.6463 16.7924 13.4271 16.0117L18.3174 11.1213C18.708 10.7308 18.708 10.0976 18.3174 9.70708C17.9269 9.31655 17.2937 9.31655 16.9032 9.70708L12.7176 13.8927C12.3271 14.2833 11.6939 14.2832 11.3034 13.8927L7.12132 9.71069C6.7308 9.32016 6.09763 9.32016 5.70711 9.71069Z" fill="#0F0F0F"></path> </g></svg>
-            </div>
-            <div class="dropdown-container" id="dropdown-container">
-                <Link class="link" href="/add/revista">
-                    <svg viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns" fill="#000000"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <title>book-album</title> <desc>Created with Sketch Beta.</desc> <defs> </defs> <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage"> <g id="Icon-Set-Filled" sketch:type="MSLayerGroup" transform="translate(-414.000000, -101.000000)" fill="#000000"> <path d="M418,101 C415.791,101 414,102.791 414,105 L414,126 C414,128.209 415.885,129.313 418,130 L429,133 L429,104 C423.988,102.656 418,101 418,101 L418,101 Z M442,101 C442,101 436.212,102.594 430.951,104 L431,104 L431,133 C436.617,131.501 442,130 442,130 C444.053,129.469 446,128.209 446,126 L446,105 C446,102.791 444.209,101 442,101 L442,101 Z" id="book-album" sketch:type="MSShapeGroup"> </path> </g> </g> </g></svg>
-                    <span class="linkText">
-                        revista
-                    </span>
-                </Link>
-                <Link class="link" href="/add/evento">
-                    <svg fill="#000000" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <title></title> <g data-name="Layer 34" id="Layer_34"> <path d="M29.92,21.62A1,1,0,0,0,29,21H23a2,2,0,0,0-2,2v6a1,1,0,0,0,.62.92A.84.84,0,0,0,22,30a1,1,0,0,0,.71-.29l7-7A1,1,0,0,0,29.92,21.62Z"></path> <path d="M22,30H7a5,5,0,0,1-5-5V10.92a1,1,0,0,1,1-1H29a1,1,0,0,1,1,1V22a1,1,0,0,1-.29.71l-7,7A1,1,0,0,1,22,30ZM4,11.92V25a3,3,0,0,0,3,3H21.59L28,21.59V11.92Z"></path> <path d="M25,2H7A5,5,0,0,0,2,7v3.92a1,1,0,0,0,1,1H29a1,1,0,0,0,1-1V7A5,5,0,0,0,25,2ZM9,9a2,2,0,1,1,2-2A2,2,0,0,1,9,9ZM23,9a2,2,0,1,1,2-2A2,2,0,0,1,23,9Z"></path> <path d="M12.81,25.19c-7.75,0-8.81-6-8.81-8.06L3.21,25A3.86,3.86,0,0,0,7,29H21V25S14.87,25.19,12.81,25.19Z"></path> </g> </g></svg>
-                    <span class="linkText">
-                        Evento
-                    </span>
-                </Link>
-                <Link class="link" href="/add/admin">
-                    <svg fill="#000000" height="200px" width="200px" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 24 24" enable-background="new 0 0 24 24" xml:space="preserve"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <g id="user-admin"> <path d="M22.3,16.7l1.4-1.4L20,11.6l-5.8,5.8c-0.5-0.3-1.1-0.4-1.7-0.4C10.6,17,9,18.6,9,20.5s1.6,3.5,3.5,3.5s3.5-1.6,3.5-3.5 c0-0.6-0.2-1.2-0.4-1.7l1.9-1.9l2.3,2.3l1.4-1.4l-2.3-2.3l1.1-1.1L22.3,16.7z M12.5,22c-0.8,0-1.5-0.7-1.5-1.5s0.7-1.5,1.5-1.5 s1.5,0.7,1.5,1.5S13.3,22,12.5,22z"></path> <path d="M2,19c0-3.9,3.1-7,7-7c2,0,3.9,0.9,5.3,2.4l1.5-1.3c-0.9-1-1.9-1.8-3.1-2.3C14.1,9.7,15,7.9,15,6c0-3.3-2.7-6-6-6 S3,2.7,3,6c0,1.9,0.9,3.7,2.4,4.8C2.2,12.2,0,15.3,0,19v5h8v-2H2V19z M5,6c0-2.2,1.8-4,4-4s4,1.8,4,4s-1.8,4-4,4S5,8.2,5,6z"></path> </g> </g></svg>
-                    <span class="linkText">
-                        Admin
-                    </span>
-                </Link>
-            </div>
+            </Link>
+            <Link class="link" href="/admin/users">
+                <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M8 7C9.65685 7 11 5.65685 11 4C11 2.34315 9.65685 1 8 1C6.34315 1 5 2.34315 5 4C5 5.65685 6.34315 7 8 7Z" fill="#000000"></path> <path d="M14 12C14 10.3431 12.6569 9 11 9H5C3.34315 9 2 10.3431 2 12V15H14V12Z" fill="#000000"></path> </g></svg>
+                <span class="linkText">
+                    Usuários
+                </span>
+            </Link>
         </div>
     </div>
 </template>

@@ -39,6 +39,7 @@ export default {
             let nextItem = container.children[2];
             nextItem.style.display = "flex";
             nextItem.classList.add("slide");
+            
             // Prev item
             let prevItem = container.children[0];
             prevItem.style.display = "flex";
@@ -55,7 +56,7 @@ export default {
         this.showItems(containerItems, actualIndex);
         this.loop = setInterval(() => {
             this.moveItem(containerItems, actualIndex);
-        }, 2000);
+        }, 5000);
     },
 };
 </script>

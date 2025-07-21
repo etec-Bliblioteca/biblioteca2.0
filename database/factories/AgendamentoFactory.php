@@ -19,8 +19,8 @@ class AgendamentoFactory extends Factory
         return [
             'rm' => 1,
             'id_revista' => 1,
-            'dt_pegar' => fake()->date(),
-            'dt_devolver' => fake()->date(),
+            'dt_pegar' => '2025-01-02',
+            'dt_devolver' => '2025-01-01',
             'state' => false,
         ];
     }

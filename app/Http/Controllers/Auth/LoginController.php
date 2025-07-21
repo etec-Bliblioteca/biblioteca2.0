@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Events\newUser;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -65,8 +66,8 @@ class LoginController extends Controller
         ]);
 
         if ($created) {
+            broadcast(new newUser($created));
             return redirect()->route('login.form');
-            return Inertia::render('Register', ['errorMsg' => 'Aguarde a liberação do seu perfil!']);
         }
     }
 

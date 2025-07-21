@@ -77,6 +77,7 @@ export default {
     width: 150px;
     height: 200px;
     border-radius: 5px;
+    object-fit: cover;
 }
 
 .cardContent {

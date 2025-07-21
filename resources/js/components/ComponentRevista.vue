@@ -30,5 +30,6 @@ img{
     background-color: black;
     border-radius: 5px;
     outline: 2px solid var(--cor1);
+    object-fit: cover;
 }
 </style>

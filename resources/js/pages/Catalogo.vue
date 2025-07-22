@@ -52,8 +52,12 @@ export default {
         User: Object,
     },
     methods: {
-        infoPopUp(idRevista) {
-            this.dadosPopUp.idRevista = idRevista;
+        clickCpRevista(revista) {
+            console.log(revista)
+            this.estadoPopUp(revista);
+            this.dadosPopUp.idRevista = revista;
+        },
+        infoPopUp() {
             this.dadosPopUp.imgPopUp = this.dadosRevista.imgPopUp;
             this.dadosPopUp.descricaoPopUp = this.dadosRevista.descricaoPopUp;
             this.dadosPopUp.temaPopUp = this.dadosRevista.temaPopUp;
@@ -66,9 +70,11 @@ export default {
             const form = useForm({
                 idRevista: idRevista,
             });
+
+            //   envia o id da revista para o backend através de um post e coloca as informações no pop up antes dele ativar
             form.post("/catalogo/revista", {
                 onSuccess: () => {
-                    this.infoPopUp(idRevista);
+                    this.infoPopUp();
                     this.showPopUp = !this.showPopUp;
                 },
             });
@@ -265,32 +271,32 @@ export default {
 
 <style scoped>
 #pg-catalogo {
-  display: grid;
-  grid-template-areas:
-    "header"
-    "catalogo"
-    "prePesquisa";
-  grid-template-rows: 240px;
-  height: auto;
+    display: grid;
+    grid-template-areas:
+        "header"
+        "catalogo"
+        "prePesquisa";
+    grid-template-rows: 240px;
+    height: auto;
 }
 
 #prevPesquisa {
-  grid-area: prePesquisa;
-  height: auto;
+    grid-area: prePesquisa;
+    height: auto;
 }
 
 #catalogo {
-  grid-area: catalogo;
-  height: auto;
-  margin-bottom: 20px;
+    grid-area: catalogo;
+    height: auto;
+    margin-bottom: 20px;
 }
 
 #revistas {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 20px;
-  flex-wrap: wrap;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
 }
 
 header {

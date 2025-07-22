@@ -131,7 +131,7 @@ export default {
     clickReservar() {
       //impede mais de uma requisição ao mesmo tempo e uma caso a quantidade seja 0
       // VERIFICA SE O USER ESTA AGENDADO
-      if(this.user){
+      if(this.user.id){
         //toast que faz a o pedido de forma assincrona para o serve
       toast
         .promise(
@@ -143,7 +143,6 @@ export default {
           },
           {
             theme: "auto",
-
             transition: "slide",
           }
         )

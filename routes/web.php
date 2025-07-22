@@ -20,6 +20,8 @@ Route::post('/catalogo/revista', [CatalogoController::class, "show"])->name('cat
 
 Route::post('/revistas/{idRevista}/{userId}/reservar', [AgendamentoController::class, 'reservar']);
 
+Route::get('/catalogo/{titulo}/pesquisar', [RevistaController::class, 'pesquisar']);
+
 
 Route::get('/catalogo/revista', function () {
     return redirect()->route('catalogo');

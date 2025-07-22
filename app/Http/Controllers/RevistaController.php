@@ -90,4 +90,17 @@ class RevistaController extends Controller
             $revista->delete();
         }
     }
+
+    public function pesquisar($titulo)
+
+    {
+        $revistas = Revista::select('imagem','id')->where('titulo','LIKE', $titulo.'%')->limit(10)->get();
+
+        if ($revistas->isEmpty()) {
+            // retorna erro
+            return response()->json(['error' => 'Nenhuma revista com esse titulo encontrada'], 400);
+        }
+
+        return response()->json(['revistas'=>$revistas->toArray()]);
+    }
 }

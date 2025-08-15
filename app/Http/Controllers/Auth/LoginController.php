@@ -79,7 +79,11 @@ class LoginController extends Controller
 
             if ($created) {
                 broadcast(new newUser($created));
-                return redirect()->route('login.form');
+                return redirect()->route('login')->with(['msg' => [
+                    'icon' => 'success',
+                    'title' => 'Cadastro feito!',
+                    'text' => "Aguarde a liberação na biblioteca",
+                ]]);
             }
         } catch (\Throwable $th) {
             return Inertia::render('Register', ['errorMsg' => ' Verifique se os dados estão corretos!']);

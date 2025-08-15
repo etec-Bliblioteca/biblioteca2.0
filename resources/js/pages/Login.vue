@@ -1,5 +1,5 @@
 <script>
-import { Link, useForm } from "@inertiajs/vue3";
+import { Link, useForm, usePage } from "@inertiajs/vue3";
 import Swal from "sweetalert2";
 export default {
     name: "Login",

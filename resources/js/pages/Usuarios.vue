@@ -108,14 +108,9 @@ export default {
             }
 
             axios
-                .get(`/admin/users/${this.txtPesquisar}/${this.campoPesq}/pesquisar`)
-                // Se a requisição for bem-sucedida, emite o evento com os resultados
+                .get(`/admin/users/${this.txtPesquisar}/${this.campoPesq != '' ? this.campoPesq : 'name'}/pesquisar`)
                 .then((response) => {
                     this.resultPesquisa = response.data.revistas;
-                })
-                // Se a requisição falhar, emite o evento sem-pesquisa com um array vazio
-                .catch((error) => {
-    
                 });
             this.pesquisando(true);
         },

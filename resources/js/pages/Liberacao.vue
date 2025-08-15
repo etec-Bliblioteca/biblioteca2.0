@@ -35,7 +35,7 @@ export default {
             form.submit("post", "/admin/liberacao");
         },
     },
-    mounted() {
+    beforeMount() {
         window.Echo.channel(`newUser`).listen(".addNewUser", (e) => {
             this.UsersInativos.push(e.newUser);
             if (Notification.permission === "granted") {

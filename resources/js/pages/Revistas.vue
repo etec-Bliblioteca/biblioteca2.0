@@ -4,6 +4,7 @@ import ListItemRevista from "@/components/admin/ComponentListItemRevista.vue";
 import Menu from "@/components/admin/ComponentMenuAdmin.vue";
 import Title from "@/components/admin/ComponentTitle.vue";
 import { Link, useForm } from "@inertiajs/vue3";
+import axios from "axios";
 import Swal from "sweetalert2";
 export default {
     name: "Revistas",
@@ -13,8 +14,12 @@ export default {
             actualPage: this.Revistas.current_page,
             links: [],
             revistaEdit: null,
-            prevUrl:"",
-            nextUrl:'',
+            prevUrl: "",
+            nextUrl: "",
+            showList: true,
+            resultPesquisa: [],
+            txtPesquisar: "",
+            showPesq: false,
         };
     },
     components: {
@@ -35,7 +40,7 @@ export default {
             // console.log(this.revistaEdit);
             this.showForm = !this.showForm;
         },
-        deleteItem(idRevista,index) {
+        deleteItem(idRevista, index) {
             Swal.fire({
                 title: "Tem certeza?",
                 text: "Esta ação pode ser irreversivel",
@@ -47,23 +52,54 @@ export default {
                 confirmButtonText: "Deletar Revista",
             }).then((result) => {
                 if (result.isConfirmed) {
-                    this.Revistas.data.splice(index,1);          
+                    this.Revistas.data.splice(index, 1);
                     const form = useForm({
                         idRevista: idRevista,
                     });
-                    form.submit('delete','/admin/revistas');
+                    form.submit("delete", "/admin/revistas");
                 }
             });
         },
+
+        // FUNCÇÔES PARA PESQUISA
+        pesquisando(estado) {
+            this.showList = !estado;
+            this.showPesq = estado;
+            console.log(this.showList, this.showPesq);
+        },
+        pesquisar() {
+            if (this.txtPesquisar.trim().length == 0) {
+                this.pesquisando(false);
+                this.semPesquisa();
+                return;
+            }
+
+            axios
+                .get(`/admin/revistas/${this.txtPesquisar}/pesquisar`)
+                // Se a requisição for bem-sucedida, emite o evento com os resultados
+                .then((response) => {
+                    this.resultPesquisa = response.data.revistas;
+                    console.log(response);
+                })
+                // Se a requisição falhar, emite o evento sem-pesquisa com um array vazio
+                .catch((error) => {
+                    if (this.txtPesquisar.trim().length > 0){
+                        console.error(error.response.data.error);
+                    }
+                });
+            this.pesquisando(true);
+        },
+        semPesquisa() {
+            this.resultPesquisa = [];
+        },
     },
     mounted() {
-        // console.log(this.Revistas)
-        this.Revistas.links.map((link,index) => {
-            if(index == 0){
-                this.prevUrl = link.url
+        this.Revistas.links.map((link, index) => {
+            if (index == 0) {
+                this.prevUrl = link.url;
             }
-            if(index == this.Revistas.links.length - 1 ){
-                this.nextUrl = link.url
+            if (index == this.Revistas.links.length - 1) {
+                this.nextUrl = link.url;
             }
 
             if (!isNaN(parseInt(link.label))) {
@@ -80,9 +116,11 @@ export default {
             <div class="containerFunctions">
                 <div class="searchBar">
                     <input
+                        v-model="txtPesquisar"
                         type="text"
                         name="inputPesquisa"
                         id="inputPesquisa"
+                        @input="pesquisar()"
                     />
                     <button class="btnSearch">
                         <svg
@@ -200,7 +238,7 @@ export default {
                             <th></th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody v-show="showList">
                         <ListItemRevista
                             v-for="(revista, index) in Revistas.data"
                             :key="index"
@@ -212,7 +250,22 @@ export default {
                             :issn="revista.issn"
                             :edicao="revista.edicao"
                             @toggle-form="toggleForm(index)"
-                            @delete-item="deleteItem(revista.id,index)"
+                            @delete-item="deleteItem(revista.id, index)"
+                        />
+                    </tbody>
+                    <tbody v-show="showPesq">
+                        <ListItemRevista
+                            v-for="(revista, index) in resultPesquisa"
+                            :key="index"
+                            :imagem="revista.imagem"
+                            :titulo="revista.titulo"
+                            :descricao="revista.descricao"
+                            :tema="revista.tema"
+                            :quantidade="revista.quantidade"
+                            :issn="revista.issn"
+                            :edicao="revista.edicao"
+                            @toggle-form="toggleForm(index)"
+                            @delete-item="deleteItem(revista.id, index)"
                         />
                     </tbody>
                 </table>
@@ -243,45 +296,204 @@ export default {
 }
 
 .searchBar {
-    /* width: 80%; */
-    height: 30px;
+    height: 44px;
     display: flex;
     align-items: center;
     justify-content: flex-start;
-    border-radius: 0px 5px 5px 0px;
+    gap: 8px;
 }
 
 .searchBar input {
-    width: 100%;
-    height: 20px;
+    flex: 1;
+    height: 40px;
     outline: none;
     font-family: var(--roboto);
-    font-weight: bolder;
+    font-weight: 500;
     color: var(--cor1);
-    gap: 5px;
     background: white;
-    border-radius: 5px 0px 0px 5px;
+    border-radius: 5px;
     border: 1px solid var(--cor1);
-    padding: 5px 10px;
+    padding: 0 12px;
+    font-size: 14px;
+    transition: all 0.2s ease;
+}
+
+.searchBar input:focus {
+    border-color: var(--primary, var(--cor1));
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.searchBar input::placeholder {
+    color: #94a3b8;
+    font-weight: 400;
 }
 
 .btnSearch {
-    width: 45px;
-    height: 35px;
+    width: 44px;
+    height: 44px;
     border-radius: 5px;
     display: flex;
     align-items: center;
     justify-content: center;
-    outline: 1px solid var(--cor1);
+    border: 1px solid var(--cor1);
     background: var(--cor3);
     cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+    left: -20px;
 }
 
 .btnSearch > svg {
-    width: 15px;
-    height: 15px;
+    width: 18px;
+    height: 18px;
+    color: white;
 }
 
+.select-label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-main, #374151);
+}
+
+.containerSelect {
+    display: flex;
+    gap: 12px;
+    align-items: flex-end;
+}
+
+.custom-select-wrapper {
+    flex: 1;
+    position: relative;
+    min-width: 0;
+}
+
+
+.custom-select {
+    height: 44px;
+    padding: 0 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 14px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    background: var(--bg-input, white);
+    color: var(--text-main, #374151);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    user-select: none;
+    min-width: 0;
+}
+
+.custom-select:hover {
+    border-color: #cbd5e1;
+}
+
+.custom-select.active,
+.custom-select:focus {
+    outline: none;
+    border-color: var(--primary, #3b82f6);
+    background: white;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+
+.selected-value {
+    flex: 1;
+    text-align: left;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-width: 0;
+    color: var(--text-main, #374151);
+}
+
+.selected-value:empty::before {
+    content: "Selecionar...";
+    color: #94a3b8;
+}
+
+
+.dropdown-arrow {
+    width: 16px;
+    height: 16px;
+    color: var(--text-secondary, #6b7280);
+    transition: transform 0.2s ease;
+    margin-left: 8px;
+    flex-shrink: 0;
+}
+
+.dropdown-arrow.rotated {
+    transform: rotate(180deg);
+}
+
+
+.dropdown-list {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+                0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+    animation: dropdownFadeIn 0.15s ease-out;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+
+.dropdown-item {
+    padding: 12px 16px;
+    font-size: 14px;
+    color: var(--text-main, #374151);
+    cursor: pointer;
+    transition: all 0.15s ease;
+    background: white;
+    border-bottom: 1px solid #f1f5f9;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.dropdown-item:last-child {
+    border-bottom: none;
+}
+
+.dropdown-item:hover {
+    background: #f8fafc;
+    color: var(--primary, #3b82f6);
+}
+
+.dropdown-item.selected {
+    background: var(--primary-light, rgba(59, 130, 246, 0.1));
+    color: var(--primary, #3b82f6);
+    font-weight: 500;
+}
+
+.dropdown-item.selected::after {
+    content: "✓";
+    color: var(--primary, #3b82f6);
+    font-weight: bold;
+    font-size: 16px;
+}
+
+/* Animação do dropdown */
+@keyframes dropdownFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
 .containerPagination {
     width: fit-content;
     height: fit-content;
@@ -314,7 +526,6 @@ export default {
 .btnPagination:hover .linkIndex {
     color: var(--cor3);
 }
-
 
 .btnPagination:hover svg path {
     fill: var(--cor3);

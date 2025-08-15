@@ -6,6 +6,7 @@ export default {
     name: "Register",
     data() {
         return {
+            clickBtn:false,
             formData: {
                 nome: "",
                 rm: null,
@@ -112,8 +113,7 @@ export default {
             <div class="form-body">
                 <!-- Nome e RM -->
                 <label class="select-label">Dados Escolar:</label>
-                <div class="form-row">
-              
+                <div class="form-row">           
                     <div class="input-group">
                         <div class="input-wrapper">
                             <svg
@@ -388,7 +388,7 @@ export default {
                 </div>
             </div>
 
-            <button class="submit-button" type="submit" @click="register()">
+            <button class="submit-button" type="submit" @click="register()" v-show="!clickBtn">
                 <span class="button-text">Registrar</span>
                 <div class="button-glow"></div>
             </button>

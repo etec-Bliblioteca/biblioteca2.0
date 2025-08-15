@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\newAgend;
 use App\Models\Agendamento;
 use App\Models\Revista;
 use App\Models\User;
@@ -58,11 +59,13 @@ class AgendamentoController extends Controller
                 'dt_devolver' => $dtDevolver
             ]);
 
-
+            broadcast(new newAgend($agendado));
             if ($agendado) {
                 // Se tiver, ele retirar uma e salva
                 $revista->quantidade -= 1;
                 $revista->save();
+
+
                 // retorna a resposta para a página
                 return response()->json(['novaQuantidade' => $revista->quantidade]);
             }

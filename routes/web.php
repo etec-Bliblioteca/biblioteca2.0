@@ -4,6 +4,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AgendamentoController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\CatalogoController;
+use App\Http\Controllers\EventoController;
 use App\Http\Controllers\PerfilController;
 use App\Http\Controllers\RevistaController;
 use App\Http\Controllers\UsersController;
@@ -44,7 +45,8 @@ Route::middleware(AdminMiddleware::class)->prefix('admin')->group(function () {
     Route::get("/liberacao", [AdminController::class, 'lib'])->name('lib.index');
 
     Route::post("/liberacao", [AdminController::class, 'lib'])->name('lib.user');
-
+ 
+    // ROTAS PARA OS PEDIDOS
     // PAGINA DE PEDIDOS
     Route::get("/pedidos", [AgendamentoController::class, 'show'])->name('admin.pedidos');
 
@@ -52,6 +54,8 @@ Route::middleware(AdminMiddleware::class)->prefix('admin')->group(function () {
 
     Route::post("/pedidos/recuse", [AgendamentoController::class, 'recuse']);
 
+
+    // ROTAS PARA AS REVISTAS
     // PEGAR TODAS AS REVISTAS
     Route::get("/revistas", [RevistaController::class, 'index'])->name("admin.revistas");
 
@@ -61,17 +65,32 @@ Route::middleware(AdminMiddleware::class)->prefix('admin')->group(function () {
     // ADICIONAR UMA REVISTA
     Route::post("/revistas", [RevistaController::class, 'create']);
 
+
     // ATUALIZAR REVISTA
     Route::post("/revistas/update", [RevistaController::class, 'update']);
 
+    // PESQUISA PARA O ADMIN
+    Route::get("/revistas/{titulo}/pesquisar", [RevistaController::class, 'pesquisarAdmin']);
+
+    // ROTAS PARA USUARIOS
     // PEGAR TODOS OS USUARIOS
     Route::get("/users", [UsersController::class, 'index'])->name("admin.users");
+
+    Route::get("/users/{valor}/{campo}/pesquisar", [UsersController::class, 'pesquisarAdmin']);
 
     Route::put("/users", [UsersController::class, 'create'])->name("admin.userAdd");
 
     Route::post("/users/edit", [UsersController::class, 'update'])->name("admin.userEdit");
 
     Route::delete("/users", [UsersController::class, 'delete'])->name("admin.userDelete");
+
+    // ROTAS PARA OS EVENTOS
+    Route::get("/eventos", [EventoController::class, 'index'])->name("admin.eventos");
+
+    Route::post("/eventos/add", [EventoController::class, 'create'])->name("admin.addEvento");
+
+    
+    Route::delete("/eventos", [EventoController::class, 'delete'])->name("admin.deleteEvento");
 });
 
 Route::get("/login", function () {
@@ -87,3 +106,10 @@ Route::get("/register", function () {
 Route::post("/register", [LoginController::class, 'create'])->name('login.register');
 
 Route::get("/logoff", [LoginController::class, 'destroy'])->name('login.logoff');
+
+Route::get('/resetpassword',function(){
+        return Inertia::render('Reset');
+})->name('login.resetpassword');
+
+
+Route::post('/resetpassword',[LoginController::class,"reset"])->name('login.resetpassword');

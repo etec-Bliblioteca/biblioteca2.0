@@ -3,23 +3,11 @@ export default {
     name: "carrocelRevistasNovas",
     data() {
         return {
-            revistasTeste: [
-                { id: 1, capa: "semImagem.jpg", rgb: "rgb(123, 45, 210)" },
-                { id: 2, capa: "semImagem.jpg", rgb: "rgb(14, 178, 96)" },
-                { id: 3, capa: "semImagem.jpg", rgb: "rgb(220, 12, 140)" },
-                { id: 4, capa: "semImagem.jpg", rgb: "rgb(66, 90, 255)" },
-                { id: 5, capa: "semImagem.jpg", rgb: "rgb(255, 189, 10)" },
-                { id: 6, capa: "semImagem.jpg", rgb: "rgb(33, 33, 33)" },
-                { id: 7, capa: "semImagem.jpg", rgb: "rgb(17, 220, 144)" },
-                { id: 8, capa: "semImagem.jpg", rgb: "rgb(245, 10, 85)" },
-                { id: 9, capa: "semImagem.jpg", rgb: "rgb(70, 150, 200)" },
-                { id: 10, capa: "semImagem.jpg", rgb: "rgb(200, 100, 255)" },
-            ],
-            loop:null,
-        };
+            
+        }
     },
     props: {
-        revistas: [(id) => Number, (capa) => String],
+        Revistas: Object,
     },
     methods: {
         reset() {
@@ -56,7 +44,7 @@ export default {
         this.showItems(containerItems, actualIndex);
         this.loop = setInterval(() => {
             this.moveItem(containerItems, actualIndex);
-        }, 5000);
+        }, 3000);
     },
 };
 </script>
@@ -74,8 +62,8 @@ export default {
     </div> -->
 
     <div id="container">
-        <div class="item" v-for="(revista) in revistasTeste" :key="revista.id">
-            <img :src="'../storage/images/semImagem.jpg'"/>
+        <div class="item" v-for="(revista,index) in Revistas" :key="index">
+            <img :src="`../storage/images/${revista.imagem}`"/>
         </div>
     </div>
 </template>
@@ -109,9 +97,9 @@ export default {
     /* animation: scale-in-center 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) both; */
 }
 
-.slide {
+/* .slide {
     animation: slide-in-fwd-right 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
-}
+} */
 
 @-webkit-keyframes scale-in-center {
     0% {

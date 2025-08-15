@@ -64,7 +64,6 @@ export default {
             this.dadosPopUp.quantPopUp = this.dadosRevista.quantPopUp;
             this.dadosPopUp.tituloPopUp = this.dadosRevista.tituloPopUp;
         },
-
         // função que muda o estado do pop up
         estadoPopUp(idRevista) {
             const form = useForm({
@@ -95,7 +94,7 @@ export default {
 
                 if (!isNaN(parseInt(link.label))) {
                     this.links.push(link);
-                }
+                } 
             });
 
             const linksFuncionais = this.collectionRevistas.links.filter(

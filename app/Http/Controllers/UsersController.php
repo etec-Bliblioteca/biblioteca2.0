@@ -114,4 +114,13 @@ class UsersController extends Controller
             ]]);
         }
     }
+
+       
+    public function pesquisarAdmin($valor,$campo)
+    {
+
+        
+        $users = User::select()->where($campo,'LIKE', $valor.'%')->limit(10)->get();
+        return response()->json(['revistas'=>$users->toArray()]);
+    }
 }

@@ -52,7 +52,6 @@ class RevistaController extends Controller
     {
         $revista = Revista::find($request->id);
         $filename = $revista->imagem;
-        // dd($revista);
         if ($request->file('file')) {
             // SE FOR DIFERENTE DA IMAGEM PADRÃO
             if ($revista->imagem != 'semImagem.jpg') {
@@ -63,18 +62,18 @@ class RevistaController extends Controller
             $filename = basename($path);
         }
 
-        // ATUALIZAR COM OS DADOS RECEBIDOS
-        $revista->titulo = $request->titulo;
-        $revista->descricao = $request->descricao;
-        $revista->tema = $request->tema;
-        $revista->quantidade = $request->quantidade;
-        $revista->issn = $request->issn;
-        $revista->edicao = $request->edicao;
-        $revista->imagem = $filename;
-
-        $revista->save();
-
-        return redirect()->route('admin.revistas');
+          // ATUALIZAR COM OS DADOS RECEBIDOS
+          $revista->titulo = $request->titulo;
+          $revista->descricao = $request->descricao;
+          $revista->tema = $request->tema;
+          $revista->quantidade = $request->quantidade;
+          $revista->issn = $request->issn;
+          $revista->edicao = $request->edicao;
+          $revista->imagem = $filename;
+  
+          $revista->save();
+  
+          return redirect()->route('admin.revistas');
     }
 
     // REMOVER REVISTAS
@@ -92,7 +91,6 @@ class RevistaController extends Controller
     }
 
     public function pesquisar($titulo)
-
     {
         $revistas = Revista::select('imagem','id')->where('titulo','LIKE', $titulo.'%')->limit(10)->get();
 
@@ -103,4 +101,19 @@ class RevistaController extends Controller
 
         return response()->json(['revistas'=>$revistas->toArray()]);
     }
+    
+
+    
+    public function pesquisarAdmin($titulo)
+    {
+        $revistas = Revista::select()->where('titulo','LIKE', $titulo.'%')->limit(10)->get();
+
+        if ($revistas->isEmpty()) {
+            // retorna erro
+            return response()->json(['error' => 'Nenhuma revista com esse titulo encontrada'], 400);
+        }
+
+        return response()->json(['revistas'=>$revistas->toArray()]);
+    }
+    
 }

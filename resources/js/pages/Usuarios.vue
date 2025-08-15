@@ -4,6 +4,7 @@ import ListItemUser from "@/components/admin/ComponentListItemUser.vue";
 import Menu from "@/components/admin/ComponentMenuAdmin.vue";
 import Title from "@/components/admin/ComponentTitle.vue";
 import { Link, useForm, usePage } from "@inertiajs/vue3";
+import axios from "axios";
 import Swal from "sweetalert2";
 export default {
     name: "Usuarios",
@@ -12,8 +13,16 @@ export default {
             showForm: false,
             userEdit: null,
             links: [],
-            prevUrl:"",
-            nextUrl:'',
+            prevUrl: "",
+            nextUrl: "",
+            dropdowns: {
+                campo: false,
+            },
+            campoPesq: "",
+            showList: true,
+            resultPesquisa: [],
+            txtPesquisar: "",
+            showPesq: false,
         };
     },
     components: {
@@ -29,7 +38,6 @@ export default {
     },
     methods: {
         toggleForm(indexUser) {
-            console.log(indexUser);
             if (indexUser != null) {
                 this.userEdit = this.Users.data[indexUser];
             }
@@ -65,15 +73,63 @@ export default {
                 }
             });
         },
+        toggleDropdown(dropdown) {
+            // Fecha todos os outros dropdowns
+            Object.keys(this.dropdowns).forEach((key) => {
+                if (key !== dropdown) {
+                    this.dropdowns[key] = false;
+                }
+            });
+            this.dropdowns[dropdown] = !this.dropdowns[dropdown];
+        },
+
+        selectOption(type, value) {
+            this.campoPesq = value;
+            console.log(this.campoPesq)
+            this.dropdowns[type] = false;
+        },
+        closeDropdowns() {
+            Object.keys(this.dropdowns).forEach((key) => {
+                this.dropdowns[key] = false;
+            });
+        },
+
+          // FUNCÇÔES PARA PESQUISA
+          pesquisando(estado) {
+            this.showList = !estado;
+            this.showPesq = estado;
+            console.log(this.showList, this.showPesq);
+        },
+        pesquisar() {
+            if (this.txtPesquisar.trim().length == 0) {
+                this.pesquisando(false);
+                this.semPesquisa();
+                return;
+            }
+
+            axios
+                .get(`/admin/users/${this.txtPesquisar}/${this.campoPesq}/pesquisar`)
+                // Se a requisição for bem-sucedida, emite o evento com os resultados
+                .then((response) => {
+                    this.resultPesquisa = response.data.revistas;
+                })
+                // Se a requisição falhar, emite o evento sem-pesquisa com um array vazio
+                .catch((error) => {
+    
+                });
+            this.pesquisando(true);
+        },
+        semPesquisa() {
+            this.resultPesquisa = [];
+        },
     },
     beforeMount() {
-        console.log(this.Users)
-        this.Users.links.map((link,index) => {
-            if(index == 0){
-                this.prevUrl = link.url
+        this.Users.links.map((link, index) => {
+            if (index == 0) {
+                this.prevUrl = link.url;
             }
-            if(index == this.Users.links.length - 1 ){
-                this.nextUrl = link.url
+            if (index == this.Users.links.length - 1) {
+                this.nextUrl = link.url;
             }
 
             if (!isNaN(parseInt(link.label))) {
@@ -90,9 +146,11 @@ export default {
             <div class="containerFunctions">
                 <div class="searchBar">
                     <input
+                        v-model="txtPesquisar"
                         type="text"
                         name="inputPesquisa"
                         id="inputPesquisa"
+                        @input="pesquisar()"
                     />
                     <button class="btnSearch">
                         <svg
@@ -117,6 +175,50 @@ export default {
                             </g>
                         </svg>
                     </button>
+                    <div class="containerSelect">
+                        <div class="custom-select-wrapper">
+                            <div
+                                class="custom-select"
+                                @click="toggleDropdown('campoPesq')"
+                            >
+                                <span class="selected-value">{{
+                                    campoPesq || "name"
+                                }}</span>
+                                <svg
+                                    class="dropdown-arrow"
+                                    :class="{ rotated: dropdowns.campoPesq }"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <path
+                                        stroke-width="1.5"
+                                        stroke="currentColor"
+                                        d="M19.5 8.25L12 15.75L4.5 8.25"
+                                    ></path>
+                                </svg>
+                            </div>
+                            <div
+                                class="dropdown-list"
+                                v-show="dropdowns.campoPesq"
+                            >
+                                <div
+                                    class="dropdown-item"
+                                    v-for="campo in [
+                                        'name',
+                                        'turma',
+                                        'email',
+                                        'rm',
+                                        'telefone',
+                                    ]"
+                                    :key="campo"
+                                    :class="{ selected: campoPesq === campo }"
+                                    @click="selectOption('campoPesq', campo)"
+                                >
+                                    {{ campo }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div class="containerActions">
                     <div class="containerPagination">
@@ -210,9 +312,26 @@ export default {
                             <th></th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody v-show="showList">
                         <ListItemUser
                             v-for="(user, index) in Users.data"
+                            :key="index"
+                            :id="user.id"
+                            :nome="user.name"
+                            :rm="user.rm"
+                            :state="user.state"
+                            :turma="user.turma"
+                            :email="user.email"
+                            :nivel="user.nivel"
+                            :telefone="user.telefone"
+                            @delete-item="deleteItem(user.id, index)"
+                            @toggle-form="toggleForm(index)"
+                        />
+                    </tbody>
+                    <!-- PESQUISA -->
+                    <tbody v-show="showPesq">
+                        <ListItemUser
+                            v-for="(user, index) in resultPesquisa"
                             :key="index"
                             :id="user.id"
                             :nome="user.name"
@@ -253,44 +372,217 @@ export default {
     justify-content: center;
 }
 
+
 .searchBar {
-    /* width: 80%; */
-    height: 30px;
+    height: 44px;
     display: flex;
     align-items: center;
     justify-content: flex-start;
-    border-radius: 0px 5px 5px 0px;
+    gap: 8px;
 }
 
 .searchBar input {
-    width: 100%;
-    height: 20px;
+    flex: 1;
+    height: 40px;
     outline: none;
     font-family: var(--roboto);
-    font-weight: bolder;
+    font-weight: 500;
     color: var(--cor1);
-    gap: 5px;
     background: white;
-    border-radius: 5px 0px 0px 5px;
+    border-radius: 5px;
     border: 1px solid var(--cor1);
-    padding: 5px 10px;
+    padding: 0 12px;
+    font-size: 14px;
+    transition: all 0.2s ease;
+}
+
+.searchBar input:focus {
+    border-color: var(--primary, var(--cor1));
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.searchBar input::placeholder {
+    color: #94a3b8;
+    font-weight: 400;
 }
 
 .btnSearch {
-    width: 45px;
-    height: 35px;
+    width: 44px;
+    height: 44px;
     border-radius: 5px;
     display: flex;
     align-items: center;
     justify-content: center;
-    outline: 1px solid var(--cor1);
+    border: 1px solid var(--cor1);
     background: var(--cor3);
     cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+    left: -20px;
 }
 
+
 .btnSearch > svg {
-    width: 15px;
-    height: 15px;
+    width: 18px;
+    height: 18px;
+    color: white;
+}
+
+.select-label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-main, #374151);
+}
+
+.containerSelect {
+    display: flex;
+    gap: 12px;
+    align-items: flex-end;
+}
+
+.custom-select-wrapper {
+    flex: 1;
+    position: relative;
+    min-width: 0;
+}
+
+.custom-select {
+    height: 44px;
+    padding: 0 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 14px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    background: var(--bg-input, white);
+    color: var(--text-main, #374151);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    user-select: none;
+    min-width: 0;
+}
+
+.custom-select:hover {
+    border-color: #cbd5e1;
+}
+
+.custom-select.active,
+.custom-select:focus {
+    outline: none;
+    border-color: var(--primary, #3b82f6);
+    background: white;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+
+.selected-value {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    color: var(--cor1);
+    font-family: var(--raleway);
+    font-weight: 900;
+    flex: 1;
+    text-align: left;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-width: 0;
+}
+
+.selected-value:empty::before {
+    content: "Selecionar...";
+    color: #94a3b8;
+}
+
+
+.dropdown-arrow {
+    width: 16px;
+    height: 16px;
+    color: var(--text-secondary, #6b7280);
+    transition: transform 0.2s ease;
+    margin-left: 8px;
+    flex-shrink: 0;
+}
+
+.dropdown-arrow.rotated {
+    transform: rotate(180deg);
+}
+
+.dropdown-list {
+    width: fit-content;
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+                0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+    animation: dropdownFadeIn 0.15s ease-out;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.dropdown-list::-webkit-scrollbar{
+    display: none;
+}
+
+.dropdown-item {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    color: var(--cor1);
+    font-family: var(--raleway);
+    font-weight: 900;
+    padding: 12px 16px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    background: white;
+    border-bottom: 1px solid #f1f5f9;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.dropdown-item:last-child {
+    border-bottom: none;
+}
+
+.dropdown-item:hover {
+    background: #f8fafc;
+    color: var(--cor3);
+}
+
+.dropdown-item.selected {
+    background: var(--cor3);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    color: var(--cor1);
+    font-family: var(--raleway);
+    font-weight: 900;
+}
+
+.dropdown-item.selected::after {
+    content: "✓";
+    color: var(--cor1);
+    font-size: 16px;
+}
+
+@keyframes dropdownFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .containerPagination {

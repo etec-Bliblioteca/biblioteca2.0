@@ -4,7 +4,6 @@
 
 :root {
     --corFundoPrincipal: #f4f6f7;
-
     --cor1: #607d8b;
     --cor2: #a2b6be;
     --cor3: #e2e8eb;
@@ -29,4 +28,15 @@ html,body{
 #app{
     width: 100vw;
     height: 100vh;
+}
+
+input[type=number]::-webkit-outer-spin-button,
+input[type=number]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Remove setinhas no Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
 }

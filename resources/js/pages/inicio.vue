@@ -18,6 +18,8 @@ export default {
     },
     props: {
         User: Object,
+        Revistas:Object,
+        Eventos:Object,
     },
     components: {
         Menu,
@@ -33,6 +35,10 @@ export default {
             this.menuActive = active;
         },
     },
+
+    beforeMount(){
+        console.log(this.Eventos);
+    }
 };
 </script>
 <template>
@@ -48,12 +54,12 @@ export default {
         <!-- Corrocel de eventos -->
         <section id="carrocelEventosLugar">
             <subtitulosPrincipais :nomeTitulo="titulo1"></subtitulosPrincipais>
-            <carrocelEventos></carrocelEventos>
+            <carrocelEventos :collectionEventos="Eventos"></carrocelEventos>
         </section>
         <!-- revistas novas -->
         <section id="carrocelRevistasNovasLugar">
             <subtitulosPrincipais :nomeTitulo="titulo2"></subtitulosPrincipais>
-            <carrocelRevistasNovas></carrocelRevistasNovas>
+            <carrocelRevistasNovas :Revistas="Revistas"></carrocelRevistasNovas>
         </section>
         <!-- botões para navegar entre as páginas -->
         <div id="caixaBotões">
@@ -86,11 +92,7 @@ export default {
     display: flex;
     align-items: center;
     justify-content: center;
-
-    /* max-width: 200px; */
-
     gap: 20px;
-
     grid-area: botões;
 }
 

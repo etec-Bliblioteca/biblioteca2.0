@@ -4,7 +4,12 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: biblioteca-app:1.0
+    image: etecbiblioteca/biblioteca-app:1.0
+    volumes:
+      - .:/var/www/html
+      - /var/www/html/vendor
+      - /var/www/html/node_modules
+      - /var/www/html/public/build
     restart: always
     environment:
       APP_ENV: production

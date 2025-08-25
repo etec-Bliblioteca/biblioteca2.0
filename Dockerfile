@@ -1,63 +1,35 @@
-# ============================
-# 1) STAGE: Build de dependências PHP (Composer)
-# ============================
-FROM composer:2 AS vendor
-
+# Etapa 1: Node para compilar assets
+FROM node:20 AS node_builder
 WORKDIR /app
-COPY composer.json composer.lock ./
-RUN composer install \
-    --ignore-platform-reqs \
-    --no-dev \
-    --no-scripts \
-    --prefer-dist \
-    --optimize-autoloader
 
-# ============================
-# 2) STAGE: Build do Frontend (Node + Vite)
-# ============================
-FROM node:20 AS frontend
-
-WORKDIR /app
-COPY package*.json ./
-RUN npm install --production=false
-
-COPY resources resources
-COPY vite.config.js postcss.config.js tailwind.config.js ./
+COPY package*.json vite.config.js ./
+COPY resources ./resources
+COPY public ./public
+RUN npm install
 RUN npm run build
 
-# ============================
-# 3) STAGE: Container final do Laravel (PHP-FPM)
-# ============================
+# Etapa 2: PHP + Laravel
 FROM php:8.2-fpm
 
-# Instala extensões PHP necessárias para Laravel
+# Dependências
 RUN apt-get update && apt-get install -y \
-    unzip git curl libpq-dev libzip-dev libonig-dev \
-    netcat-openbsd \
-    && pecl install redis \
-    && docker-php-ext-enable redis \
-    && docker-php-ext-install pdo pdo_mysql zip mbstring bcmath pcntl \
-    && rm -rf /var/lib/apt/lists/*
+    git curl libpng-dev libonig-dev libxml2-dev zip unzip \
+    && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
 
 WORKDIR /var/www/html
 
-# Copia dependências do composer do estágio 'vendor'
-COPY --from=vendor /app/vendor ./vendor
-
-# Copia frontend compilado do estágio 'frontend'
-COPY --from=frontend /app/public ./public
-
-# Copia o restante do projeto
+# Copiar código Laravel
 COPY . .
 
-# Otimizações Laravel (não cache rotas que dão conflito)
-RUN php artisan config:clear \
-    && php artisan view:clear \
-    && php artisan config:cache \
-    && php artisan view:cache
+# Copiar build do Vite
+COPY --from=node_builder /app/public/build ./public/build
+
+# Instalar Composer
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+RUN composer install --optimize-autoloader --no-dev
 
 # Permissões
-RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+RUN chown -R www-data:www-data /var/www/html \
+    && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
-EXPOSE 9000
 CMD ["php-fpm"]

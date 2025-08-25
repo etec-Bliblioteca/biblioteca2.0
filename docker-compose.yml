@@ -1,21 +1,31 @@
 services:
+  # APP (Laravel + PHP-FPM)
   app:
     build:
       context: .
       dockerfile: Dockerfile
-    image: laravel-app:latest
+    image: biblioteca-app:1.0
     restart: always
-    ports:
-      - '80:80'
     environment:
       APP_ENV: production
       APP_DEBUG: "false"
       APP_KEY: ${APP_KEY}
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_DATABASE: ${DB_DATABASE}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      BROADCAST_DRIVER: redis
+      QUEUE_CONNECTION: redis
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
     networks:
       - sail
     depends_on:
       - mysql
+      - redis
 
+  # Banco de dados
   mysql:
     image: 'mysql/mysql-server:8.0'
     environment:
@@ -28,9 +38,50 @@ services:
     networks:
       - sail
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-p${DB_PASSWORD}"]
-      retries: 3
+      test: [ "CMD", "mysqladmin", "ping", "-p${DB_PASSWORD}" ]
+      retries: 5
+      interval: 5s
       timeout: 5s
+
+  # Redis
+  redis:
+    image: redis:7
+    container_name: redis
+    ports:
+      - "6379:6379"
+    networks:
+      - sail
+
+  # Websockets (Reverb)
+  reverb:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: reverb-server
+    working_dir: /var/www/html
+    command: ["sh", "/var/www/html/wait-for-db.sh"]
+    depends_on:
+        - app
+        - mysql
+        - redis
+    networks:
+      - sail
+    ports:
+      - "6001:6001"
+
+  # Nginx
+  nginx:
+    image: nginx:stable-alpine
+    restart: always
+    ports:
+      - "8080:80"
+    volumes:
+      - .:/var/www/html
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - app
+    networks:
+      - sail
 
 networks:
   sail:
@@ -39,4 +90,3 @@ networks:
 volumes:
   sail-mysql:
     driver: local
- 

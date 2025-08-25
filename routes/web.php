@@ -45,7 +45,7 @@ Route::middleware(AdminMiddleware::class)->prefix('admin')->group(function () {
     Route::get("/liberacao", [AdminController::class, 'lib'])->name('lib.index');
 
     Route::post("/liberacao", [AdminController::class, 'lib'])->name('lib.user');
- 
+
     // ROTAS PARA OS PEDIDOS
     // PAGINA DE PEDIDOS
     Route::get("/pedidos", [AgendamentoController::class, 'show'])->name('admin.pedidos');
@@ -89,7 +89,7 @@ Route::middleware(AdminMiddleware::class)->prefix('admin')->group(function () {
 
     Route::post("/eventos/add", [EventoController::class, 'create'])->name("admin.addEvento");
 
-    
+
     Route::delete("/eventos", [EventoController::class, 'delete'])->name("admin.deleteEvento");
 });
 
@@ -109,7 +109,7 @@ Route::get("/logoff", [LoginController::class, 'destroy'])->name('login.logoff')
 
 Route::get('/resetpassword',function(){
         return Inertia::render('Reset');
-})->name('login.resetpassword');
+})->name('password.reset.form');
 
 
-Route::post('/resetpassword',[LoginController::class,"reset"])->name('login.resetpassword');
+Route::post('/resetpassword',[LoginController::class,"reset"])->name('password.reset.submit');

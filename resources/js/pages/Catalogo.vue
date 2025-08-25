@@ -94,7 +94,7 @@ export default {
 
                 if (!isNaN(parseInt(link.label))) {
                     this.links.push(link);
-                } 
+                }
             });
 
             const linksFuncionais = this.collectionRevistas.links.filter(

@@ -13,7 +13,7 @@ services:
     restart: always
     environment:
       APP_ENV: production
-      APP_DEBUG: "false"
+      APP_DEBUG: "true"
       APP_KEY: ${APP_KEY}
       DB_HOST: mysql
       DB_PORT: 3306
@@ -64,11 +64,11 @@ services:
       dockerfile: Dockerfile
     container_name: reverb-server
     working_dir: /var/www/html
-    command: ["sh", "/var/www/html/wait-for-db.sh"]
+    command: [ "sh", "/var/www/html/wait-for-db.sh" ]
     depends_on:
-        - app
-        - mysql
-        - redis
+      - app
+      - mysql
+      - redis
     networks:
       - sail
     ports:
@@ -87,6 +87,25 @@ services:
       - app
     networks:
       - sail
+
+  # SSR (Server Side Rendering)
+  ssr:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    working_dir: /var/www/html
+    command: [ "node", "bootstrap/ssr/ssr.js" ]
+    volumes:
+      - .:/var/www/html
+      - /var/www/html/node_modules
+    environment:
+      - NODE_ENV=production
+    depends_on:
+      - app
+    networks:
+      - sail
+    ports:
+      - "13714:13714"
 
 networks:
   sail:

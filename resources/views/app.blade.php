@@ -13,8 +13,6 @@
     <!-- Scripts -->
     @routes
     @vite('resources/js/app.js')
-    @vite('resources/js/ssr.js')
-
     @inertiaHead
 </head>
 

@@ -4,7 +4,7 @@ set -e
 HOST=${DB_HOST:-mysql}
 PORT=${DB_PORT:-3306}
 
-echo "Aguardando o MySQL em $HOST:$PORT..."
+echo "Aguardando MySQL em $HOST:$PORT..."
 
 while ! nc -z $HOST $PORT; do
   sleep 2

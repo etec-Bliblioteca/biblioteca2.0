@@ -19,7 +19,7 @@ export default defineConfig({
         }),
     ],
     build: {
-        outDir: 'public/build', // 👈 garante que vai gerar no lugar certo
+        outDir: 'public/build',
         manifest: true,
         emptyOutDir: true,
     },

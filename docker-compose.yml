@@ -1,15 +1,11 @@
+version: "3.9"
+
 services:
-  # APP (Laravel + PHP-FPM)
   app:
     build:
       context: .
       dockerfile: Dockerfile
     image: etecbiblioteca/biblioteca-app:1.0
-    volumes:
-      - .:/var/www/html
-      - /var/www/html/vendor
-      - /var/www/html/node_modules
-      - /var/www/html/public/build
     restart: always
     environment:
       APP_ENV: production
@@ -24,57 +20,63 @@ services:
       QUEUE_CONNECTION: redis
       REDIS_HOST: redis
       REDIS_PORT: 6379
+      INERTIA_SSR_URL: http://ssr:13714
+    volumes:
+      - ./resources:/var/www/html/resources
+      - ./storage:/var/www/html/storage
+      - ./public:/var/www/html/public
+      - /var/www/html/vendor
+      - /var/www/html/node_modules
+
     networks:
       - sail
     depends_on:
-      - mysql
-      - redis
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_started
 
-  # Banco de dados
   mysql:
-    image: 'mysql/mysql-server:8.0'
+    image: mysql:8.0
     environment:
       MYSQL_ROOT_PASSWORD: '${DB_PASSWORD}'
       MYSQL_DATABASE: '${DB_DATABASE}'
-      MYSQL_USER: '${DB_USERNAME}'
       MYSQL_PASSWORD: '${DB_PASSWORD}'
     volumes:
-      - 'sail-mysql:/var/lib/mysql'
+      - sail-mysql:/var/lib/mysql
     networks:
       - sail
     healthcheck:
-      test: [ "CMD", "mysqladmin", "ping", "-p${DB_PASSWORD}" ]
+      test: ["CMD", "mysqladmin", "ping", "-p${DB_PASSWORD}"]
       retries: 5
       interval: 5s
       timeout: 5s
 
-  # Redis
   redis:
     image: redis:7
-    container_name: redis
-    ports:
-      - "6379:6379"
     networks:
       - sail
+    ports:
+      - "6379:6379"
 
-  # Websockets (Reverb)
-  reverb:
+  ssr:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: reverb-server
     working_dir: /var/www/html
-    command: [ "sh", "/var/www/html/wait-for-db.sh" ]
+    command: ["node", "resources/js/ssr.js"]
+    volumes:
+      - .:/var/www/html
+      - /var/www/html/node_modules
+    environment:
+      NODE_ENV: production
     depends_on:
       - app
-      - mysql
-      - redis
     networks:
       - sail
     ports:
-      - "6001:6001"
+      - "13714:13714"
 
-  # Nginx
   nginx:
     image: nginx:stable-alpine
     restart: always
@@ -87,25 +89,6 @@ services:
       - app
     networks:
       - sail
-
-  # SSR (Server Side Rendering)
-  ssr:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    working_dir: /var/www/html
-    command: [ "node", "bootstrap/ssr/ssr.js" ]
-    volumes:
-      - .:/var/www/html
-      - /var/www/html/node_modules
-    environment:
-      - NODE_ENV=production
-    depends_on:
-      - app
-    networks:
-      - sail
-    ports:
-      - "13714:13714"
 
 networks:
   sail:

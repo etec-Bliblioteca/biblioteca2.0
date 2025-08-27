@@ -22,12 +22,8 @@ services:
       REDIS_PORT: 6379
       INERTIA_SSR_URL: http://ssr:13714
     volumes:
-      - ./resources:/var/www/html/resources
-      - ./storage:/var/www/html/storage
-      - ./public:/var/www/html/public
+      - ./:/var/www/html
       - /var/www/html/vendor
-      - /var/www/html/node_modules
-
     networks:
       - sail
     depends_on:
@@ -41,7 +37,6 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: '${DB_PASSWORD}'
       MYSQL_DATABASE: '${DB_DATABASE}'
-      MYSQL_PASSWORD: '${DB_PASSWORD}'
     volumes:
       - sail-mysql:/var/lib/mysql
     networks:
@@ -67,7 +62,6 @@ services:
     command: ["node", "resources/js/ssr.js"]
     volumes:
       - .:/var/www/html
-      - /var/www/html/node_modules
     environment:
       NODE_ENV: production
     depends_on:

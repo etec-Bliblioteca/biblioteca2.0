@@ -1,43 +1,55 @@
+# =========================
 # Etapa 1: Node para build dos assets
+# =========================
 FROM node:20 AS node_builder
 WORKDIR /app
 
 # Copiar configs do npm e Vite
 COPY package*.json vite.config.js ./
+
+# Instalar dependências Node
+RUN npm install
+
+# Copiar código necessário para build
 COPY resources ./resources
 COPY public ./public
 
-# Instalar dependências e rodar build
-RUN npm install
+# Rodar build
 RUN npm run build
 
-# Etapa 2: PHP-FPM com Laravel
+# =========================
+# Etapa 2: PHP-FPM com Laravel + Node para SSR
+# =========================
 FROM php:8.2-fpm
 
-# Dependências PHP
+# Instalar dependências do sistema
 RUN apt-get update && apt-get install -y \
     git curl libpng-dev libonig-dev libxml2-dev zip unzip \
     && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd \
-    && apt-get clean
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Instalar Node.js para SSR runtime
 RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
-    && apt-get install -y nodejs
+    && apt-get install -y nodejs \
+    && npm install -g npm@latest
 
 WORKDIR /var/www/html
 
-# Copiar código Laravel (inclui composer.json etc)
+# Copiar código Laravel (sem sobrescrever build do Vite)
 COPY . .
 
-# Copiar build do Node gerado na etapa 1
+# Copiar build do Node gerado na etapa 1 (por último)
 COPY --from=node_builder /app/public/build ./public/build
 
-# Copiar build do Node
-COPY --from=node_builder /app/public/build /var/www/html/public/build
-
-# Instalar Composer
+# Copiar Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
-RUN composer install --no-dev --optimize-autoloader
+
+# Instalar dependências PHP
+RUN composer install --no-dev --optimize-autoloader --no-interaction --no-scripts
+
+# Instalar dependências Node para SSR (sem devDependencies)
+COPY package*.json ./
+RUN npm install --omit=dev --no-audit --no-fund
 
 # Ajustar permissões
 RUN mkdir -p storage bootstrap/cache public/build \

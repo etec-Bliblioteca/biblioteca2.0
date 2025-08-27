@@ -12,7 +12,7 @@
 
     <!-- Scripts -->
     @routes
-    @vite('resources/js/ssr.js')
+    @vite('resources/js/app.js')
     @inertiaHead
 </head>
 

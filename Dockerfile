@@ -1,61 +1,53 @@
-# =========================
-# Etapa 1: Node para build dos assets
-# =========================
-FROM node:20 AS node_builder
+# Etapa 1: Build do frontend (Vue SSR)
+FROM node:20 AS frontend
+
 WORKDIR /app
 
-# Copiar configs do npm e Vite
 COPY package*.json vite.config.js ./
-
-# Instalar dependências Node
 RUN npm install
 
-# Copiar código necessário para build
 COPY resources ./resources
 COPY public ./public
-
-# Rodar build
 RUN npm run build
 
-# =========================
-# Etapa 2: PHP-FPM com Laravel + Node para SSR
-# =========================
-FROM php:8.2-fpm
-
-# Instalar dependências do sistema
-RUN apt-get update && apt-get install -y \
-    git curl libpng-dev libonig-dev libxml2-dev zip unzip \
-    && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd \
-    && apt-get clean && rm -rf /var/lib/apt/lists/*
-
-# Instalar Node.js para SSR runtime
-RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
-    && apt-get install -y nodejs \
-    && npm install -g npm@latest
+# Etapa 2: Build do backend (Composer)
+FROM composer:2 AS vendor
 
 WORKDIR /var/www/html
 
-# Copiar código Laravel (sem sobrescrever build do Vite)
+COPY composer.* ./
+RUN composer install --prefer-dist --no-interaction --no-scripts
+
+# Etapa 3: Imagem final PHP-FPM + Node para SSR
+FROM php:8.2-fpm
+
+# Dependências do sistema
+RUN apt-get update && apt-get install -y \
+    git curl libpng-dev libonig-dev libxml2-dev zip unzip \
+    && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd \
+    && pecl install redis && docker-php-ext-enable redis \
+    && apt-get clean
+
+# Node.js runtime para SSR
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+    && apt-get install -y nodejs
+
+WORKDIR /var/www/html
+
+# Copiar código Laravel
 COPY . .
 
-# Copiar build do Node gerado na etapa 1 (por último)
-COPY --from=node_builder /app/public/build ./public/build
+# Copiar dependências PHP
+COPY --from=vendor /var/www/html/vendor ./vendor
 
-# Copiar Composer
-COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+# Copiar build frontend
+COPY --from=frontend /app/public/build ./public/build
+COPY --from=frontend /app/public/build/ssr.js ./public/build/ssr.js
 
-# Instalar dependências PHP
-RUN composer install --no-dev --optimize-autoloader --no-interaction --no-scripts
-
-# Instalar dependências Node para SSR (sem devDependencies)
-COPY package*.json ./
-RUN npm install --omit=dev --no-audit --no-fund
-
-# Ajustar permissões
-RUN mkdir -p storage bootstrap/cache public/build \
+# Permissões
+RUN mkdir -p storage bootstrap/cache \
     && chown -R www-data:www-data storage bootstrap/cache public/build \
     && chmod -R 775 storage bootstrap/cache public/build
 
-USER www-data
-
+EXPOSE 9000
 CMD ["php-fpm"]

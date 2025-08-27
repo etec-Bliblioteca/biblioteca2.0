@@ -59,7 +59,7 @@ services:
       context: .
       dockerfile: Dockerfile
     working_dir: /var/www/html
-    command: ["node", "resources/js/ssr.js"]
+    command: ["node", "public/build/ssr.js"]
     volumes:
       - .:/var/www/html
     environment:

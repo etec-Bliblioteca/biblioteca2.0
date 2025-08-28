@@ -1,53 +1,34 @@
-# Etapa 1: Build do frontend (Vue SSR)
-FROM node:20 AS frontend
-
-WORKDIR /app
-
-COPY package*.json vite.config.js ./
-RUN npm install
-
-COPY resources ./resources
-COPY public ./public
-RUN npm run build
-
-# Etapa 2: Build do backend (Composer)
-FROM composer:2 AS vendor
-
-WORKDIR /var/www/html
-
-COPY composer.* ./
-RUN composer install --prefer-dist --no-interaction --no-scripts
-
-# Etapa 3: Imagem final PHP-FPM + Node para SSR
 FROM php:8.2-fpm
 
-# Dependências do sistema
+# Instalar dependências do sistema e PHP
 RUN apt-get update && apt-get install -y \
-    git curl libpng-dev libonig-dev libxml2-dev zip unzip \
+    git curl libpng-dev libonig-dev libxml2-dev zip unzip libssl-dev \
     && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd \
-    && pecl install redis && docker-php-ext-enable redis \
-    && apt-get clean
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Node.js runtime para SSR
-RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
-    && apt-get install -y nodejs
+# Instalar o Composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 WORKDIR /var/www/html
 
-# Copiar código Laravel
+# Copiar o código Laravel para o container
 COPY . .
 
-# Copiar dependências PHP
-COPY --from=vendor /var/www/html/vendor ./vendor
+# Instalar dependências do Composer
+RUN composer install --optimize-autoloader
 
-# Copiar build frontend
-COPY --from=frontend /app/public/build ./public/build
-COPY --from=frontend /app/public/build/ssr.js ./public/build/ssr.js
+# Instalar Node.js e dependências
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+    && apt-get install -y nodejs \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/* \
+    && npm ci \
+    && npm run build
 
-# Permissões
-RUN mkdir -p storage bootstrap/cache \
-    && chown -R www-data:www-data storage bootstrap/cache public/build \
-    && chmod -R 775 storage bootstrap/cache public/build
+# Ajustar permissões para o usuário www-data
+RUN mkdir -p storage bootstrap/cache bootstrap/build \
+    && chown -R www-data:www-data storage bootstrap/cache bootstrap/build
 
-EXPOSE 9000
+USER www-data
+
 CMD ["php-fpm"]

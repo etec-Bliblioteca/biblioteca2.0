@@ -57,19 +57,21 @@ services:
   ssr:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.ssr
     working_dir: /var/www/html
-    command: ["node", "public/build/ssr.js"]
+    command: ["sh", "-c", "test -f public/build/ssr.js || npm run build && node public/build/ssr.js"]
     volumes:
       - .:/var/www/html
     environment:
       NODE_ENV: production
     depends_on:
-      - app
+      app:
+        condition: service_started
     networks:
       - sail
     ports:
       - "13714:13714"
+
 
   nginx:
     image: nginx:stable-alpine

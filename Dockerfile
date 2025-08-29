@@ -17,13 +17,22 @@ COPY . .
 # Instalar dependências do Composer
 RUN composer install --optimize-autoloader
 
+# Rodar comandos Artisan
+USER root
+RUN php artisan key:generate \
+    && php artisan config:cache \
+    && php artisan route:cache \
+    && php artisan view:cache
+
+
 # Instalar Node.js e dependências
 RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
     && apt-get install -y nodejs \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* \
     && npm ci \
-    && npm run build
+    && npm run build\
+    && npm run build:ssr
 
 # Ajustar permissões para o usuário www-data
 RUN mkdir -p storage bootstrap/cache bootstrap/build \

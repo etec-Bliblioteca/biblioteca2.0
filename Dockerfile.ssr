@@ -1,12 +1,25 @@
-FROM node:20-alpine AS ssr
+# Dockerfile.ssr
+FROM node:20
 
 WORKDIR /var/www/html
 
-COPY package*.json vite.config.js ./
+# Copiar package.json e instalar todas dependências (dev + prod)
+COPY package*.json ./
 RUN npm ci
 
-COPY . .
+# Copiar código necessário para SSR
+COPY resources ./resources
+COPY public ./public
+COPY vite.config.js ./
+COPY .env ./
 
+# Rodar build Vite e SSR
 RUN npm run build
+RUN npm run build:ssr
 
-CMD ["node", "public/build/ssr.js"]
+# Garantir permissões
+RUN mkdir -p bootstrap/ssr \
+    && chown -R node:node bootstrap/ssr
+
+# Rodar SSR
+CMD ["node", "bootstrap/ssr/ssr.js"]

@@ -6,15 +6,14 @@
         "dev": "vite",
         "build": "vite build",
         "build:ssr": "vite build --ssr",
-        "ssr": "node resources/js/ssr.js",
-        "docker-build": "npm install && npm run build && npm run build:ssr"
+        "serve:ssr": "node resources/js/ssr.js"
     },
     "devDependencies": {
         "@inertiajs/vue3": "^2.1.2",
         "@tailwindcss/forms": "^0.5.3",
         "@tailwindcss/vite": "^4.0.0",
         "@vitejs/plugin-vue": "^5.0.0",
-        "@vue/server-renderer": "^3.4.0",
+        "@vue/server-renderer": "^3.5.20",
         "autoprefixer": "^10.4.12",
         "axios": "^1.10.0",
         "concurrently": "^9.0.1",
